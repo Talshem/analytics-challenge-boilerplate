@@ -145,6 +145,30 @@ export const getAllByObj = (entity: keyof DbSchema, query: object) => {
   return result;
 };
 
+// Event
+
+
+export const createEvent = (eventDetails: Event)  => {
+  const event: Event =     {
+    _id: shortid(),
+    session_id: v4(),
+    name: eventDetails.name,
+    distinct_user_id: eventDetails.distinct_user_id,
+    date: Date.now(),
+    os: eventDetails.os,
+    browser: eventDetails.browser,
+    geolocation: eventDetails.geolocation,
+    url: eventDetails.url
+  }
+
+  saveEvent(event);
+  return event;
+};
+
+const saveEvent = (event: Event) => {
+  db.get(EVENT_TABLE).push(event).write();
+};
+
 // Search
 export const cleanSearchQuery = (query: string) => query.replace(/[^a-zA-Z0-9]/g, "");
 

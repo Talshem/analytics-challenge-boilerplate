@@ -17853,6 +17853,17 @@
   ],
   "users": [
     {
+      "id": "wfXCnY0wh",
+      "uuid": "a1a8ff9c-d9a7-436f-af7e-c5ebf3d90aee",
+      "firstName": "tal",
+      "lastName": "sh",
+      "username": "tal",
+      "password": "$2a$10$EXh/88F.KP3euIutXjGrs.z.zM3NOSedfpEVZflMMvnwsHJ25wgF.",
+      "balance": 10000,
+      "createdAt": "2020-11-01T12:12:00.315Z",
+      "modifiedAt": "2020-11-01T12:12:00.315Z"
+    },
+    {
       "id": "n9i5RjJ8a",
       "uuid": "e931688f-5e52-4d0e-8dbb-220f6cb8058b",
       "firstName": "Ralph",

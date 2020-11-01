@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 
 // some useful database functions in here:
 import {
+createEvent,
 } from "./database";
 import { Event, weeklyRetentionObject } from "../../client/src/models/event";
 import { ensureAuthenticated, validateMiddleware } from "./helpers";
@@ -26,6 +27,12 @@ interface Filter {
   search: string;
   offset: number;
 }
+
+router.post('/', (req: Request, res: Response) => {
+  const eventDetails: Event = req.body;
+  createEvent(eventDetails)
+  res.json({event: eventDetails})
+});
 
 router.get('/all', (req: Request, res: Response) => {
   res.send('/all')
@@ -58,10 +65,6 @@ router.get('/retention', (req: Request, res: Response) => {
 });
 router.get('/:eventId',(req : Request, res : Response) => {
   res.send('/:eventId')
-});
-
-router.post('/', (req: Request, res: Response) => {
-  res.send('/')
 });
 
 router.get('/chart/os/:time',(req: Request, res: Response) => {
