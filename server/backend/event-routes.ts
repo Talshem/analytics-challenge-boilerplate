@@ -6,6 +6,7 @@ import { Request, Response } from "express";
 // some useful database functions in here:
 import {
 createEvent,
+getAllEvents
 } from "./database";
 import { Event, weeklyRetentionObject } from "../../client/src/models/event";
 import { ensureAuthenticated, validateMiddleware } from "./helpers";
@@ -35,7 +36,8 @@ router.post('/', (req: Request, res: Response) => {
 });
 
 router.get('/all', (req: Request, res: Response) => {
-  res.send('/all')
+  let data = getAllEvents();
+  res.send(data)
     
 });
 

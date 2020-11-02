@@ -6,7 +6,7 @@ export const eventMachine = dataMachine("events").withConfig({
   services: {
     fetchData: async (ctx, event: any) => {
       const payload = omit("type", event);
-      const resp = await httpClient.get(`http://localhost:3001/events`, {
+      const resp = await httpClient.get(`http://localhost:3001/events/all`, {
         params: event.type === "FETCH" ? payload : undefined,
       });
       return resp.data;

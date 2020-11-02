@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Interpreter } from "xstate";
 import { AuthMachineContext, AuthMachineEvents } from "../machines/authMachine";
 import { Grid, Row, Column } from "../Styles/Styles"
 import { DataContext, DataEvents } from "../machines/dataMachine";
+import { useService } from "@xstate/react";
 
 export interface Props {
   authService: Interpreter<AuthMachineContext, any, AuthMachineEvents, any>;
@@ -10,10 +11,13 @@ export interface Props {
 }
 
 const DashBoard: React.FC<Props> = ({authService, eventService}) => {
+const [authState, sendAuth] = useService(authService);
+const [eventState, sendEvent] = useService(eventService);
 
-  console.log(authService)
-  console.log(eventService)
-  
+  useEffect(() => {
+  sendEvent("FETCH")
+  }, [sendEvent]);
+
 
   return (
 <Grid>

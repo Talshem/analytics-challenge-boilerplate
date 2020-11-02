@@ -17852,6 +17852,17 @@
     }
   ],
   "users": [
+  {
+      "id": "wfXCnY0wh",
+      "uuid": "a1a8ff9c-d9a7-436f-af7e-c5ebf3d90aee",
+      "firstName": "tal",
+      "lastName": "sh",
+      "username": "tal",
+      "password": "$2a$10$EXh/88F.KP3euIutXjGrs.z.zM3NOSedfpEVZflMMvnwsHJ25wgF.",
+      "balance": 10000,
+      "createdAt": "2020-11-01T12:12:00.315Z",
+      "modifiedAt": "2020-11-01T12:12:00.315Z"
+    },
     {
       "id": "n9i5RjJ8a",
       "uuid": "e931688f-5e52-4d0e-8dbb-220f6cb8058b",
@@ -18601,17 +18612,6 @@
       "balance": 75609,
       "createdAt": "2020-10-01T09:13:42.678Z",
       "modifiedAt": "2020-10-29T19:34:28.576Z"
-    },
-    {
-      "id": "wfXCnY0wh",
-      "uuid": "a1a8ff9c-d9a7-436f-af7e-c5ebf3d90aee",
-      "firstName": "tal",
-      "lastName": "sh",
-      "username": "tal",
-      "password": "$2a$10$EXh/88F.KP3euIutXjGrs.z.zM3NOSedfpEVZflMMvnwsHJ25wgF.",
-      "balance": 10000,
-      "createdAt": "2020-11-01T12:12:00.315Z",
-      "modifiedAt": "2020-11-01T12:12:00.315Z"
     }
   ],
   "contacts": [
@@ -20366,17 +20366,6 @@
       "isDeleted": false,
       "createdAt": "2019-10-31T03:08:47.374Z",
       "modifiedAt": "2020-10-29T06:01:00.266Z"
-    },
-    {
-      "id": "txmhsInzn",
-      "uuid": "4d1c77e6-5805-4971-87f7-05c46d8067f1",
-      "userId": "wfXCnY0wh",
-      "bankName": "111111111",
-      "accountNumber": "1111111111",
-      "routingNumber": "111111111",
-      "isDeleted": false,
-      "createdAt": "2020-11-01T12:12:15.665Z",
-      "modifiedAt": "2020-11-01T12:12:15.665Z"
     }
   ],
   "transactions": [

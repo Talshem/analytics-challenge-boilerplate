@@ -169,6 +169,9 @@ const saveEvent = (event: Event) => {
   db.get(EVENT_TABLE).push(event).write();
 };
 
+export const getAllEvents = () => db.get(EVENT_TABLE).sortBy('date').value();
+
+
 // Search
 export const cleanSearchQuery = (query: string) => query.replace(/[^a-zA-Z0-9]/g, "");
 
