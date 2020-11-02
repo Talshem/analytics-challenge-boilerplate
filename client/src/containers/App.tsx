@@ -11,6 +11,7 @@ import AlertBar from "../components/AlertBar";
 import SignInForm from "../components/SignInForm";
 import SignUpForm from "../components/SignUpForm";
 import { bankAccountsMachine } from "../machines/bankAccountsMachine";
+import { eventMachine } from "../machines/eventMachine";
 import PrivateRoutesContainer from "./PrivateRoutesContainer";
 
 // @ts-ignore
@@ -35,6 +36,8 @@ const App: React.FC = () => {
 
   const [, , bankAccountsService] = useMachine(bankAccountsMachine);
 
+  const [, , eventService] = useMachine(eventMachine);
+
   const isLoggedIn =
     authState.matches("authorized") ||
     authState.matches("refreshing") ||
@@ -49,6 +52,7 @@ const App: React.FC = () => {
           isLoggedIn={isLoggedIn}
           notificationsService={notificationsService}
           authService={authService}
+          eventService={eventService}
           snackbarService={snackbarService}
           bankAccountsService={bankAccountsService}
         />

@@ -2,12 +2,19 @@ import React from "react";
 import { Interpreter } from "xstate";
 import { AuthMachineContext, AuthMachineEvents } from "../machines/authMachine";
 import { Grid, Row, Column } from "../Styles/Styles"
+import { DataContext, DataEvents } from "../machines/dataMachine";
 
 export interface Props {
   authService: Interpreter<AuthMachineContext, any, AuthMachineEvents, any>;
+  eventService: Interpreter<DataContext, any, DataEvents, any>;
 }
 
-const DashBoard: React.FC = () => {
+const DashBoard: React.FC<Props> = ({authService, eventService}) => {
+
+  console.log(authService)
+  console.log(eventService)
+  
+
   return (
 <Grid>
 <Row>
