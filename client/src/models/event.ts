@@ -4,8 +4,7 @@ export interface Event {
   name: eventName;
   url: string;
   distinct_user_id: string;
-  from: number;
-  to: number|null;
+  date: eventDate;
   os: os;
   browser: browser;
   geolocation: GeoLocation;
@@ -36,4 +35,9 @@ export interface RetentionCohort {
   browser: string;
   search: string;
   offset: number;
+}
+
+export type eventDate = {
+from: number;
+to: number;
 }

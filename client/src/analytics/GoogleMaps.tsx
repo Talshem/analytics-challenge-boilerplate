@@ -3,7 +3,7 @@ import { GoogleMap, LoadScript, Marker  } from '@react-google-maps/api';
 import { Event } from '../models/event'
 
 interface Props {
-events: any
+events: any[]
 }
 
 const containerStyle = {
@@ -27,7 +27,7 @@ const [map, setMap] = useState(null)
         center={center}
         zoom={1}
       >
-    {events && events.slice(0,100).map((e: Event ) => {
+    {events && events.map((e: Event ) => {
 return (
 <Marker
 position={e.geolocation.location}

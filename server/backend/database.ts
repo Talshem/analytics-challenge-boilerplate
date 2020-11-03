@@ -149,13 +149,15 @@ export const getAllByObj = (entity: keyof DbSchema, query: object) => {
 
 
 export const createEvent = (eventDetails: Event)  => {
-  const event: Event =     {
+  const event: Event = {
     _id: shortid(),
     session_id: v4(),
     name: eventDetails.name,
     distinct_user_id: eventDetails.distinct_user_id,
-    from: Date.now(),
-    to: Date.now(),
+    date: {
+      from: Date.now(),
+      to: Date.now()
+    },
     os: eventDetails.os,
     browser: eventDetails.browser,
     geolocation: eventDetails.geolocation,
