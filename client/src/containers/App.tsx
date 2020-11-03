@@ -36,8 +36,6 @@ const App: React.FC = () => {
 
   const [, , bankAccountsService] = useMachine(bankAccountsMachine);
 
-  const [, , eventService] = useMachine(eventMachine);
-
   const isLoggedIn =
     authState.matches("authorized") ||
     authState.matches("refreshing") ||
@@ -52,7 +50,6 @@ const App: React.FC = () => {
           isLoggedIn={isLoggedIn}
           notificationsService={notificationsService}
           authService={authService}
-          eventService={eventService}
           snackbarService={snackbarService}
           bankAccountsService={bankAccountsService}
         />

@@ -4,7 +4,8 @@ export interface Event {
   name: eventName;
   url: string;
   distinct_user_id: string;
-  date: number;
+  from: number;
+  to: number|null;
   os: os;
   browser: browser;
   geolocation: GeoLocation;

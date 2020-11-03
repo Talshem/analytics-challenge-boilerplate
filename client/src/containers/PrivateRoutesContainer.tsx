@@ -22,7 +22,6 @@ export interface Props {
   notificationsService: Interpreter<DataContext, DataSchema, DataEvents, any>;
   snackbarService: Interpreter<SnackbarContext, SnackbarSchema, SnackbarEvents, any>;
   bankAccountsService: Interpreter<DataContext, any, DataEvents, any>;
-  eventService: Interpreter<DataContext, any, DataEvents, any>;
 }
 
 const PrivateRoutesContainer: React.FC<Props> = ({
@@ -31,7 +30,6 @@ const PrivateRoutesContainer: React.FC<Props> = ({
   notificationsService,
   snackbarService,
   bankAccountsService,
-  eventService
 }) => {
   const [, sendNotifications] = useService(notificationsService);
 
@@ -71,7 +69,7 @@ const PrivateRoutesContainer: React.FC<Props> = ({
           <TransactionDetailContainer authService={authService} />
         </PrivateRoute>
         <Route exact path="/admin">
-          <DashBoard authService={authService} eventService={eventService}/>
+          <DashBoard authService={authService}/>
         </Route>
       </Switch>
     </MainLayout>

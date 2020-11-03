@@ -1,33 +1,46 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Interpreter } from "xstate";
 import { AuthMachineContext, AuthMachineEvents } from "../machines/authMachine";
 import { Grid, Row, Column } from "../Styles/Styles"
-import { DataContext, DataEvents } from "../machines/dataMachine";
-import { useService } from "@xstate/react";
+import GoogleMaps from '../analytics/googleMaps'
+import { useService, useMachine } from "@xstate/react";
+import { eventMachine } from "../machines/eventMachine";
+import { httpClient } from "../utils/asyncUtils";
 
 export interface Props {
   authService: Interpreter<AuthMachineContext, any, AuthMachineEvents, any>;
-  eventService: Interpreter<DataContext, any, DataEvents, any>;
 }
 
-const DashBoard: React.FC<Props> = ({authService, eventService}) => {
+const DashBoard: React.FC<Props> = ({authService}) => {
 const [authState, sendAuth] = useService(authService);
-const [eventState, sendEvent] = useService(eventService);
+const [eventState, sendEvent] = useMachine(eventMachine);
+
+const [events, setEvents] = useState(null)
 
   useEffect(() => {
-  sendEvent("FETCH")
+  const fetchData = async () => {
+      const { data } = await httpClient.get(`http://localhost:3001/events/all`)
+      setEvents(data)
+    }; fetchData()
   }, [sendEvent]);
 
-
+  
   return (
 <Grid>
 <Row>
-<Column size={1}>Header</Column>
+<Column size={1}>
+Analytics
+</Column>
 </Row>
 
 <Row>
-<Column size={1}>Google Maps</Column>
-<Column size={2}>Time on URL</Column>
+<Column size={1}>
+   Time on URL
+</Column>
+
+<Column size={2}>
+<GoogleMaps events={events}/>
+ </Column>
 </Row>
 
 <Row>

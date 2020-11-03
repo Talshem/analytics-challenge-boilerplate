@@ -23,6 +23,9 @@ const TransactionPublicList: React.FC<TransactionPublicListProps> = ({
   const [current, send, publicTransactionService] = useMachine(publicTransactionsMachine);
   const { pageData, results } = current.context;
 
+
+console.log(current)
+
   // @ts-ignore
   if (window.Cypress) {
     // @ts-ignore
