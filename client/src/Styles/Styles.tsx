@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 
 export const Grid = styled.div`
-background:grey;
 text-align:center;
 width:120%;
 margin-left:-10%;
@@ -19,4 +18,18 @@ type Column = {
 export const Column = styled.div<Column>`
 border: 1px solid black;
 flex: ${(props) => props.size};
+`
+
+export const Table = styled.table`
+border-collapse: collapse;
+font-size:12px;
+`
+export const TableRow = styled.tr`
+`
+
+export const TableData = styled.td`
+border: 1px solid black;
+`
+export const TableHeader = styled.th`
+border: 1px solid black;
 `

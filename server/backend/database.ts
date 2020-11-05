@@ -172,8 +172,11 @@ const saveEvent = (event: Event) => {
   db.get(EVENT_TABLE).push(event).write();
 };
 
-export const getAllEvents = () => db.get(EVENT_TABLE).sortBy('date').value();
+export const getAllEvents = () => db.get(EVENT_TABLE).sortBy('date.from').value();
+export const getAllEventsWeekly = () => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from > Date.now() - (1000 * 60 * 60 * 24 * 7)).value();
+export const getAllEventsDaily = () => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from > Date.now() - (1000 *60 * 60 * 24)).value();
 
+export const getEventsFromDay = (dayZero: number) => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from >= dayZero && event.date.from <= dayZero + 1000 * 60 * 60 * 24 * 7 * 6).value();
 
 // Search
 export const cleanSearchQuery = (query: string) => query.replace(/[^a-zA-Z0-9]/g, "");

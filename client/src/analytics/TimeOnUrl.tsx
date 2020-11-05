@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react'
 import {
   BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
+import { httpClient } from "../utils/asyncUtils";
+import { Event } from '../models/event'
 
 interface Props {
-events: any[]
+events: any
 }
 
 
 const TimeOnUrl: React.FC<Props> = ({ events }) => {
-const [chartData, setChartData] = useState([])
+const [chartData, setChartData] = useState(events)
 
     return (
          <BarChart
@@ -21,14 +23,13 @@ const [chartData, setChartData] = useState([])
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="fullname" />
+        <XAxis dataKey="userFullName" />
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar dataKey="contacts" fill="#8884d8" />
-        <Bar dataKey="notifications" fill="#8884d8" />
-        <Bar dataKey="bankaccounts" fill="#8884d8" />
-        <Bar dataKey="home" fill="#82ca9d" />
+        <Bar dataKey="url" fill="#8884d8" />
+        <Bar dataKey="admin" fill="#8884d8" />
+        <Bar dataKey="login" fill="red" />
       </BarChart>
     )
 }
