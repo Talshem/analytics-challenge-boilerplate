@@ -21,7 +21,7 @@ const fetchData = async () => {
     return (
         <>
 <h1>Page Views</h1>
-<BarChart width={500} height={380} data={events}>
+<BarChart width={600} height={380} data={events}>
   <XAxis tickFormatter={val => `${val[0].toUpperCase()}${val.substr(1,val.length)}`} dataKey="page" />
   <YAxis tickFormatter={val => `${val} sec`}/>
   <Tooltip />

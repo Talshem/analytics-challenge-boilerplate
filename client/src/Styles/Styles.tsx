@@ -2,8 +2,8 @@ import styled from 'styled-components'
 
 export const Grid = styled.div`
 text-align:center;
-width:120%;
-margin-left:-10%;
+width:140%;
+margin-left:-20%;
 `
 
 export const Row = styled.div`

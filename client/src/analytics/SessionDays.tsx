@@ -29,7 +29,7 @@ const fetchData = async () => {
       <h1>Session (Days)</h1>
       <TextField label='Date' type='date' value={date} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDate(event.target.value)}/>
         <LineChart
-        width={500}
+        width={600}
         height={350}
         data={events}
       >

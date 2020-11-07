@@ -20,7 +20,7 @@ const fetchData = async () => {
     return (
       <>
       <h1>All Users Time on URL Average (Hours)</h1>
-        <PieChart width={530} height={400}>
+        <PieChart width={600} height={400}>
         <Pie data={events} dataKey="sessions" nameKey="page" cx="50%" cy="50%" outerRadius={150} label>
          {
       events.map((entry, index) => (

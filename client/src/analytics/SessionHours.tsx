@@ -34,7 +34,7 @@ const fetchData = async () => {
        <TextField style={{marginLeft:'25px', marginRight:'50px'}} label='From' type='date' value={dateFrom} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDateFrom(event.target.value)}/>
         <TextField label='To' type='date' value={dateTo} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDateTo(event.target.value)}/>
         <LineChart
-        width={500}
+        width={600}
         height={350}
         data={events}
 

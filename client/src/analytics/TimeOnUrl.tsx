@@ -49,7 +49,7 @@ const fetchData = async () => {
        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDate(Date.parse(event.target.value))}
        />
          <BarChart
-        width={1050}
+        width={1250}
         height={330}
         data={search === '' ? events.slice(0, 8) : events.filter(item => item.userFullName.toUpperCase().includes(search.toUpperCase())).slice(0, 8)}
         margin={{

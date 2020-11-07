@@ -48,7 +48,7 @@ const fetchData = async () => {
        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDate(Date.parse(event.target.value))}
        />
         <LineChart
-        width={500}
+        width={600}
         height={290}
         data={events[events.indexOf(events.find((item => item.userFullName.toUpperCase().includes(search.toUpperCase()))))] && events[events.indexOf(events.find((item => item.userFullName.toUpperCase().includes(search.toUpperCase()))))].views}
       >
