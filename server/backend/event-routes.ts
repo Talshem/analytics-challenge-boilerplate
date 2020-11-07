@@ -52,7 +52,7 @@ retention: number[]
 router.post('/', (req: Request, res: Response) => {
   const eventDetails: Event = req.body;
   createEvent(eventDetails)
-  res.json({event: eventDetails})
+  res.send(eventDetails)
 });
 
 router.get('/all', (req: Request, res: Response) => {
