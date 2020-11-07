@@ -188,9 +188,9 @@ array.push(newObj)
 let eventsData: RetentionWeek[] = []
 array.filter((event: any) => array.indexOf(event) % 7 === 0).map((e: any, index: number) => {
 
-let signedUsers : string[] = [];
+let newUsers : string[] = [];
 for (let item of array.slice(array.indexOf(e), array.indexOf(e) + 7)) {
-signedUsers = signedUsers.concat(item.users)
+newUsers = newUsers.concat(item.users)
 }
 
 
@@ -203,7 +203,7 @@ let retentionWeek: RetentionWeek = {
 week: `Week ${index + 1}`,
 from: e.date,
 to: array[array.indexOf(e)+6] ? array[array.indexOf(e)+6].date : array[array.length-1].date,
-newUsers: signedUsers,
+newUsers: newUsers,
 activeUsers: activeUsers ,
 weeklyRetention: []
 }
@@ -213,10 +213,10 @@ eventsData.push(retentionWeek)
 for (let item of eventsData) {
 for (let i=eventsData.indexOf(item)+1; i < eventsData.length; i++) {
 let remaining = 0;
-for (let user of item.signedUsers){
+for (let user of item.newUsers){
 if (eventsData[i].activeUsers.includes(user)) remaining += 1;
 }
-item.retention.push(remaining / item.signedUsers.length * 100)
+item.weeklyRetention.push(remaining / item.newUsers.length * 100)
 }
 }
 res.send({events: eventsData, users: events.filter(event => event.name === 'signup').length})
