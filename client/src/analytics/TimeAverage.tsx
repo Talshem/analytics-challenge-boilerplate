@@ -4,26 +4,23 @@ import {
   } from 'recharts';
 import { httpClient } from "../utils/asyncUtils";
 
-const colors = ['red', 'blue', 'yellow', 'green']
+const colors = ['#26C6DA', '#81C784', '#FBC02D ', '#FF8A65']
 
-const SessionHours: React.FC = () => {
+const TimeAverage: React.FC = () => {
 const [events, setEvents] = useState([])
 const [date, setDate] = useState<number>(1601543622678)
-const [users, setUsers] = useState([])
 
 useEffect(() => {
 const fetchData = async () => {
-  const { data } = await httpClient.get(`http://localhost:3001/events/chart/pageview/${date}`)
-  setEvents(data.events)
-  setUsers(data.users)
+  const { data } = await httpClient.get(`http://localhost:3001/events/chart/timeaverage/${date}`)
+  setEvents(data)
 }; fetchData();
 }, [date])
 
-console.log(events, users)
-
-
     return (
-        <PieChart width={550} height={400}>
+      <>
+      <h1>All Users Time on URL Average (Hours)</h1>
+        <PieChart width={530} height={400}>
         <Pie data={events} dataKey="sessions" nameKey="page" cx="50%" cy="50%" outerRadius={150} label>
          {
       events.map((entry, index) => (
@@ -34,7 +31,8 @@ console.log(events, users)
               <Tooltip />
               <Legend />
       </PieChart>
+      </>
     )
 }
 
-export default SessionHours
+export default TimeAverage

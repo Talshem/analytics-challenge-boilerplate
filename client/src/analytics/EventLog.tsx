@@ -48,6 +48,8 @@ setEvents(data)
     
 
     return (
+      <>
+      <h1>Events Log</h1>
         <div style={{display:'flex'}}>
          <div style={{flex:'1'}}>
        <TextField label="Search" variant="standard" size='small' className={classes.formControl} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearh(event.target.value as string)}/>
@@ -96,6 +98,7 @@ setEvents(data)
         </InfiniteScroll>
         </div>
         </div>
+        </>
     )
 }
 

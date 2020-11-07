@@ -13,6 +13,8 @@ import { User } from '../models/user'
 import RetentionCohort from "analytics/RetentionCohort";
 import TimeOnUrl from "analytics/TimeOnUrl";
 import EventLog from "analytics/EventLog";
+import PageViews from "analytics/PageViews";
+import UserViews from "analytics/UserViews";
 import ErrorBoundary from 'analytics/ErrorBoundaries'
 
 
@@ -26,11 +28,6 @@ const [eventState, sendEvent] = useMachine(eventMachine);
 
   return (
 <Grid>
-<Row style={{height:'20px'}}>
-<Column size={1}>
-Analytics
-</Column>
-</Row>
 
 <Row>
 <Column size={1}>
@@ -38,14 +35,6 @@ Analytics
 <GoogleMaps/>
 </ErrorBoundary>
  </Column>
-</Row>
-
-<Row>
-<Column size={1}>
-     <ErrorBoundary>
-  <TimeOnUrl/>
-  </ErrorBoundary>
-</Column>
 </Row>
 
 <Row>
@@ -81,8 +70,30 @@ Analytics
 </ErrorBoundary>
 </Column>
 </Row>
-</Grid>
 
+
+<Row>
+<Column size={1}>
+  <ErrorBoundary>
+ <PageViews/>
+</ErrorBoundary>
+</Column>
+<Column size={1}>
+  <ErrorBoundary>
+ <UserViews/>
+</ErrorBoundary>
+</Column>
+</Row>
+
+<Row>
+<Column size={1}>
+     <ErrorBoundary>
+  <TimeOnUrl/>
+  </ErrorBoundary>
+</Column>
+</Row>
+
+</Grid>
   );
 };
 

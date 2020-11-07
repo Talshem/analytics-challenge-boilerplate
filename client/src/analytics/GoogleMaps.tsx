@@ -3,24 +3,20 @@ import { GoogleMap, LoadScript, Marker  } from '@react-google-maps/api';
 import { Event } from '../models/event'
 import { httpClient } from "../utils/asyncUtils";
 import { makeStyles } from '@material-ui/core/styles';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles((theme) => ({
-  formControl: {
+  dateInput: {
     margin: theme.spacing(1),
-    maxWidth: 100,
+    width: 150,
     position:'static',
-    marginLeft:'-982px',
-    marginTop:'-48px'
+    marginTop:'-47px'
   }
   }));
 
 const containerStyle = {
   width: '100%',
-  height: '100%',
+  height: '84%',
   borderRight: '2px solid #c1c1c1'
 };
  
@@ -32,18 +28,20 @@ const center = {
 const GoogleMaps: React.FC = () => {
 const [map, setMap] = useState(null)
 const [events, setEvents] = useState([])
-const [time, setTime] = useState<'week'|'today'|'all'>('all')
+const [time, setTime] = useState(1601543622678)
 const classes = useStyles();
 
 useEffect(() => {
 const fetchData = async () => {
-  const { data } = await httpClient.get(`http://localhost:3001/events/${time}`)
+  const { data } = await httpClient.get(`http://localhost:3001/events/chart/geolocation/${time}`)
   setEvents(data)
 }; fetchData();
 }, [time])
 
+
     return (
   <> 
+  <h1>Views By Location</h1>
       <LoadScript 
       googleMapsApiKey={process.env.REACT_APP_GOOGLE_KEY as string}>
      <GoogleMap
@@ -60,15 +58,13 @@ position={e.geolocation.location}
 )})}
       </GoogleMap>
       </LoadScript>
-
- <FormControl  className={classes.formControl}>
-<InputLabel id="demo-simple-select-label">Since</InputLabel>
-<Select style={{background:'white'}} label='Since' value={time} onChange={(event) => setTime(event.target.value as 'week'|'today'|'all')}>
-<MenuItem value='week'>Last Week</MenuItem>
-<MenuItem value='today'>Last Day</MenuItem>
-<MenuItem value='all'>All Time</MenuItem>
-</Select>
-</FormControl>
+ <TextField
+       label="Date"
+       type='date' 
+       className={classes.dateInput}
+       value={new Date(time).toISOString().substr(0, 10)}
+       onChange={(event: React.ChangeEvent<HTMLInputElement>) => setTime(Date.parse(event.target.value))}
+       />
 
 </>
     )

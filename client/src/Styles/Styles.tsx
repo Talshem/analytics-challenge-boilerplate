@@ -8,7 +8,7 @@ margin-left:-10%;
 
 export const Row = styled.div`
 display: flex;
-height:400px;
+height:480px;
 `
 
 type Column = {
@@ -16,7 +16,7 @@ type Column = {
 };
 
 export const Column = styled.div<Column>`
-border: 1px solid black;
+border: 1px solid #e9e9e9;
 flex: ${(props) => props.size};
 `
 
@@ -24,7 +24,7 @@ export const Table = styled.table`
 border-collapse: collapse;
 font-size:16px;
 width:100%;
-height:100%
+height:84%
 `
 export const TableRow = styled.tr`
 `

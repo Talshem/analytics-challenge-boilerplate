@@ -174,9 +174,10 @@ const saveEvent = (event: Event) => {
 
 export const getAllEvents = () => db.get(EVENT_TABLE).sortBy('date.from').value();
 export const getAllEventsWeekly = () => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from > Date.now() - OneWeek).value();
-export const getAllEventsDaily = () => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from > Date.now() - OneDay).value();
+export const getEventsToday = () => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from > Date.now() - OneDay).value();
+export const getEventsInDay = (dayZero: number) => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from >= dayZero && event.date.from <= dayZero + OneDay).value();
 export const getEventById = (eventId: string) => db.get(EVENT_TABLE).find({_id: eventId}).value();
-export const getEventsFromDay = (dayZero: number) => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from >= dayZero && event.date.from <= dayZero + 1000 * 60 * 60 * 24 * 7 * 6).value();
+export const getEventsFromDay = (dayZero: number) => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from >= dayZero && event.date.from <= dayZero + OneWeek * 6).value();
 
 // Search
 export const cleanSearchQuery = (query: string) => query.replace(/[^a-zA-Z0-9]/g, "");

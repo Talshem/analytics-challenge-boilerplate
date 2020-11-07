@@ -9,9 +9,10 @@ createEvent,
 getAllEvents,
 getAllUsers,
 getAllEventsWeekly,
-getAllEventsDaily,
+getEventsToday,
 getEventsFromDay,
-getEventById
+getEventById,
+getEventsInDay
 } from "./database";
 import { Event, weeklyRetentionObject } from "../../client/src/models/event";
 import { User } from "../../client/src/models/user";
@@ -79,7 +80,7 @@ router.get('/all', (req: Request, res: Response) => {
 
 router.get('/today', (req: Request, res: Response) => {
   let data = []
-  let events = getAllEventsDaily();
+  let events = getEventsToday();
   let users = getAllUsers();
   for (let item of events) {
       let user = users.find((person) => person.id === item.distinct_user_id) as User
@@ -229,11 +230,63 @@ const event = getEventById(eventId)
 });
 
 router.get('/chart/os/:time',(req: Request, res: Response) => {
-  res.send('/chart/os/:time')
-})
+const { time } = req.params
+let events = getEventsFromDay(Number(time));
+let users = getAllUsers();
+let array: any[] = []
 
+for ( let user of users) { 
+let associatedEvents = events.filter((item) => item.distinct_user_id === user.id);
+let obj: any = {}
+
+for (let item of associatedEvents) {
+if (obj[new Date(item.date.from).toISOString().split('T')[0]]) {
+obj[new Date(item.date.from).toISOString().split('T')[0]][item.url.split('3000/')[1]] += 1;
+} else {
+obj[new Date(item.date.from).toISOString().split('T')[0]] = {
+signup: 0,
+login: 0,
+home: 0,
+admin: 0
+}
+obj[new Date(item.date.from).toISOString().split('T')[0]][item.url.split('3000/')[1]] = 1;
+}
+}
+let datesArray: any[] = []
+for (const [key, value] of Object.entries(obj)) {
+datesArray.push({date: key, visits: value})
+}
+array.push({userId: user.id, userFullName:`${user.firstName} ${user.lastName}`, views: datesArray })
+}
+res.send(array)
+})
   
 router.get('/chart/pageview/:time',(req: Request, res: Response) => {
+const { time } = req.params
+let events = getEventsFromDay(Number(time));
+let array : any = [];
+let obj: any = {
+home: 0,
+login: 0,
+admin: 0,
+signup: 0
+}
+for ( let item of events) { 
+obj[item.url.split('3000/')[1]] === 0 ?
+obj[item.url.split('3000/')[1]] = 1 :
+obj[item.url.split('3000/')[1]] += 1
+}
+for (const [key, value] of Object.entries(obj)) {
+let newObj = {
+page: key,
+views: value
+}
+array.push(newObj)
+}
+res.send(array)
+})
+
+router.get('/chart/timeaverage/:time',(req: Request, res: Response) => {
 const { time } = req.params
 let events = getEventsFromDay(Number(time));
 let users = getAllUsers();
@@ -246,17 +299,17 @@ signup: 0
 }
 for ( let item of events) { 
 obj[item.url.split('3000/')[1]] === 0 ?
-obj[item.url.split('3000/')[1]] = Number(((item.date.to - item.date.from) / OneHour).toFixed(2)) :
-obj[item.url.split('3000/')[1]] += Number(((item.date.to - item.date.from) / OneHour).toFixed(2))
+obj[item.url.split('3000/')[1]] = ((item.date.to - item.date.from) / OneHour / users.length) :
+obj[item.url.split('3000/')[1]] += ((item.date.to - item.date.from) / OneHour / users.length)
 }
 for (const [key, value] of Object.entries(obj)) {
 let newObj = {
 page: key,
-sessions: value
+sessions: Number(Number(value).toFixed(2))
 }
 array.push(newObj)
 }
-res.send({events: array, users: users.length})
+res.send(array)
 })
 
 router.get('/chart/timeonurl/:time',(req: Request, res: Response) => {
@@ -286,7 +339,17 @@ res.send(array)
 })
 
 router.get('/chart/geolocation/:time',(req: Request, res: Response) => {
-  res.send('/chart/geolocation/:time')
+const { time } = req.params
+let array : any = [];
+let events = getEventsInDay(Number(time));
+  for (let item of events) {
+      let obj = {
+      eventId: item._id,
+      geolocation: item.geolocation,
+      }
+      array.push(obj)
+    }
+  res.send(array)
 })
 
 

@@ -35,8 +35,10 @@ const fetchData = async () => {
 }, [date])
 
 
+
     return (
       <>
+      <h1>Time On URL (Seconds)</h1>
       <TextField className={classes.textField} size='small' onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearh(event.target.value as string)} id="outlined-basic" label="Search" variant="outlined" />
 
       <TextField
@@ -59,12 +61,12 @@ const fetchData = async () => {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar dataKey="home" fill="yellow"/>
-        <Bar dataKey="admin" fill="blue" />
-        <Bar dataKey="login" fill="red" />
+        <Bar dataKey="home" fill="#FBC02D"/>
+        <Bar dataKey="admin" fill="#26C6DA" />
+        <Bar dataKey="login" fill="#FF8A65" />
       </BarChart>
       </>
     )
-}
+      }
 
 export default TimeOnUrl;

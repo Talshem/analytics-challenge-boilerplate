@@ -26,6 +26,7 @@ const fetchData = async () => {
 
     return (
       <>
+      <h1>Session (Days)</h1>
       <TextField label='Date' type='date' value={date} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDate(event.target.value)}/>
         <LineChart
         width={500}
@@ -37,7 +38,7 @@ const fetchData = async () => {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Line type="monotone" dataKey="sessions" stroke="#8884d8" activeDot={{ r: 8 }} />
+        <Line strokeWidth={3} type="monotone" dataKey="sessions" stroke="#8884d8" activeDot={{ r: 8 }} />
       </LineChart>
       </>
     )
