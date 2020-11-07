@@ -50,9 +50,9 @@ setUsers(data.users)
 
 {events.map((e, index) => { return (
 <TableRow key={index}>
-<TableData>{new Date(e.from).toDateString().split(' ').slice(1).join(' ')} - {new Date(e.to).toDateString().split(' ').slice(1).join(' ')} <br/> <span style={{color:'grey'}}> {e.signedUsers.length} users </span></TableData>
+<TableData>{new Date(e.from).toDateString().split(' ').slice(1).join(' ')} - {new Date(e.to).toDateString().split(' ').slice(1).join(' ')} <br/> <span style={{color:'grey'}}> {e.newUsers.length} users </span></TableData>
 <TableData style={{background:'#f0f0f0'}}>100.00%</TableData>
-{e.retention.map((e: number, index: number) => <TableData key={index} retention={e}>{e.toFixed(2)}%</TableData>)}
+{e.weeklyRetention.map((e: number, index: number) => <TableData key={index} retention={e}>{e.toFixed(2)}%</TableData>)}
 </TableRow>
 )})}
 </tbody>

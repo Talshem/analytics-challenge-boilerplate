@@ -44,9 +44,9 @@ interface RetentionWeek {
 week: string,
 from: string,
 to: string,
-signedUsers: string[],
+newUsers: string[],
 activeUsers: string[],
-retention: number[]
+weeklyRetention: number[]
 }
 
 router.post('/', (req: Request, res: Response) => {
@@ -203,9 +203,9 @@ let retentionWeek: RetentionWeek = {
 week: `Week ${index + 1}`,
 from: e.date,
 to: array[array.indexOf(e)+6] ? array[array.indexOf(e)+6].date : array[array.length-1].date,
-signedUsers: signedUsers,
+newUsers: signedUsers,
 activeUsers: activeUsers ,
-retention: []
+weeklyRetention: []
 }
 eventsData.push(retentionWeek)
 });
