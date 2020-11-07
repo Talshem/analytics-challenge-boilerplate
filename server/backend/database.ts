@@ -69,7 +69,7 @@ import {
   isCommentNotification,
 } from "../../client/src/utils/transactionUtils";
 import { DbSchema } from "../../client/src/models/db-schema";
-
+import { OneDay, OneWeek } from "./timeFrames";
 
 export type TDatabase = {
   users: User[];
@@ -173,9 +173,9 @@ const saveEvent = (event: Event) => {
 };
 
 export const getAllEvents = () => db.get(EVENT_TABLE).sortBy('date.from').value();
-export const getAllEventsWeekly = () => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from > Date.now() - (1000 * 60 * 60 * 24 * 7)).value();
-export const getAllEventsDaily = () => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from > Date.now() - (1000 *60 * 60 * 24)).value();
-
+export const getAllEventsWeekly = () => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from > Date.now() - OneWeek).value();
+export const getAllEventsDaily = () => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from > Date.now() - OneDay).value();
+export const getEventById = (eventId: string) => db.get(EVENT_TABLE).find({_id: eventId}).value();
 export const getEventsFromDay = (dayZero: number) => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from >= dayZero && event.date.from <= dayZero + 1000 * 60 * 60 * 24 * 7 * 6).value();
 
 // Search

@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from 'react'
-import {
-    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-  } from 'recharts';
 import { httpClient } from "../utils/asyncUtils";
 import { Table, TableRow, TableData, TableHeader } from "../Styles/Styles"
+import TextField from '@material-ui/core/TextField';
+import { makeStyles } from '@material-ui/core/styles';
+
+
+const useStyles = makeStyles((theme) => ({
+  dateInput: {
+    margin: theme.spacing(1),
+    position:'static',
+    float:'right',
+    marginTop:'-50px',
+  }
+  }));
 
 const RetentionCohort: React.FC = () => {
 const [events, setEvents] = useState<any[]>([])
 const [users, setUsers] = useState<number>(0)
-const [dayZero, setDayZero] = useState(1599177600000)
+const [dayZero, setDayZero] = useState(1601543622678)
+const classes = useStyles();
 
 useEffect(() => {
 const fetchData = async () => {
@@ -21,30 +31,36 @@ setUsers(data.users)
 
     return (
       <>
-       <input type='date' value={new Date(dayZero).toISOString().substr(0, 10)} onChange={(event) => setDayZero(Date.parse(event.target.value))}/>
-
        <Table>
+           <tbody>
         <TableRow>
             <TableHeader></TableHeader>
             <TableHeader>Week 0</TableHeader>
-{events.map(e => <TableHeader>{e.week}</TableHeader>)}
+{events.map((e, index) => < TableHeader key={index}>{e.week}</TableHeader>)}
         </TableRow>
 
         <TableRow>
-<TableData>All Users <br/> {users} users </TableData>
-<TableData> 100.00% </TableData>
-{events.map(e => <TableData>{(e.activeUsers.length / users * 100).toFixed(2)}%</TableData>)}
+<TableData> <strong>All Users</strong> <br/> <span style={{color:'grey'}}> {users} users </span> </TableData>
+<TableData style={{background:'#f0f0f0'}}> 100.00% </TableData>
+{events.map((e, index) => <TableData key={index} retention={(e.activeUsers.length / users * 100)}>{(e.activeUsers.length / users * 100).toFixed(2)}%</TableData>)}
         </TableRow>
 
-{events.map(e => { return (
-    <TableRow>
-<TableData>{new Date(e.from).toDateString().split(' ').slice(1).join(' ')} - {new Date(e.to).toDateString().split(' ').slice(1).join(' ')} <br/> {e.signedUsers.length} users</TableData>
-<TableData>100.00%</TableData>
-{e.retention.map((e: number) => <TableData>{e.toFixed(2)}%</TableData>)}
+{events.map((e, index) => { return (
+<TableRow key={index}>
+<TableData>{new Date(e.from).toDateString().split(' ').slice(1).join(' ')} - {new Date(e.to).toDateString().split(' ').slice(1).join(' ')} <br/> <span style={{color:'grey'}}> {e.signedUsers.length} users </span></TableData>
+<TableData style={{background:'#f0f0f0'}}>100.00%</TableData>
+{e.retention.map((e: number, index: number) => <TableData key={index} retention={e}>{e.toFixed(2)}%</TableData>)}
 </TableRow>
 )})}
-
+</tbody>
        </Table>
+              <TextField
+       label="Date"
+       type='date' 
+       className={classes.dateInput}
+       value={new Date(dayZero).toISOString().substr(0, 10)}
+       onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDayZero(Date.parse(event.target.value))}
+       />
     </>
     )
 }

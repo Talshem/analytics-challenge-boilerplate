@@ -3,7 +3,6 @@ import { Interpreter } from "xstate";
 import { AuthMachineContext, AuthMachineEvents } from "../machines/authMachine";
 import { Grid, Row, Column } from "../Styles/Styles"
 import GoogleMaps from '../analytics/GoogleMaps'
-import TimeOnUrl from '../analytics/TimeOnUrl'
 import SessionHours from '../analytics/SessionHours'
 import SessionDays from '../analytics/SessionDays'
 import TimeAverage from '../analytics/TimeAverage'
@@ -12,6 +11,10 @@ import { eventMachine } from "../machines/eventMachine";
 import { Event } from '../models/event'
 import { User } from '../models/user'
 import RetentionCohort from "analytics/RetentionCohort";
+import TimeOnUrl from "analytics/TimeOnUrl";
+import EventLog from "analytics/EventLog";
+import ErrorBoundary from 'analytics/ErrorBoundaries'
+
 
 export interface Props {
   authService: Interpreter<AuthMachineContext, any, AuthMachineEvents, any>;
@@ -31,34 +34,53 @@ Analytics
 
 <Row>
 <Column size={1}>
-  {/* <TimeOnUrl/> */}
-</Column>
-
-<Column size={2}>
+  <ErrorBoundary>
 <GoogleMaps/>
+</ErrorBoundary>
  </Column>
 </Row>
 
 <Row>
 <Column size={1}>
-{/* <TimeAverage/> */}
-</Column>
-
-<Column size={1}>
-<SessionDays/>
-</Column>
-<Column size={1}>
-<SessionHours/>
+     <ErrorBoundary>
+  <TimeOnUrl/>
+  </ErrorBoundary>
 </Column>
 </Row>
 
 <Row>
 <Column size={1}>
-<RetentionCohort/>
+  <ErrorBoundary>
+<SessionDays/>
+</ErrorBoundary>
 </Column>
-<Column size={1}>Event log</Column>
+<Column size={1}>
+  <ErrorBoundary>
+<SessionHours/>
+</ErrorBoundary>
+</Column>
 </Row>
 
+<Row>
+<Column size={1}>
+  <ErrorBoundary>
+<RetentionCohort/>
+</ErrorBoundary>
+</Column>
+</Row>
+
+<Row>
+<Column size={1}>
+  <ErrorBoundary>
+ <TimeAverage/> 
+</ErrorBoundary>
+</Column>
+<Column size={1}>
+  <ErrorBoundary>
+  <EventLog/>
+</ErrorBoundary>
+</Column>
+</Row>
 </Grid>
 
   );
