@@ -10,7 +10,9 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     position:'static',
     float:'right',
-    marginTop:'-50px',
+    marginRight:'50px',
+    transform: 'scale(1.5)',
+    marginTop:'-70px',
   }
   }));
 

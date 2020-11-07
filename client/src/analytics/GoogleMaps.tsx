@@ -9,8 +9,9 @@ const useStyles = makeStyles((theme) => ({
   dateInput: {
     margin: theme.spacing(1),
     width: 150,
+    transform: 'scale(1.5)',
     position:'static',
-    marginTop:'-47px'
+    marginTop:'-80px'
   }
   }));
 
@@ -58,6 +59,7 @@ position={e.geolocation.location}
 )})}
       </GoogleMap>
       </LoadScript>
+
  <TextField
        label="Date"
        type='date' 
