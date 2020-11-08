@@ -5101,13 +5101,13 @@
       "url": "http://localhost3000/login"
     },
     {
-      "_id": "Hxfi-9rc4",
-      "session_id": "7902dea8-93fe-48dd-a081-0daea12f512c",
+      "_id": "q8WOTb3kX",
+      "session_id": "faf61023-1acb-468b-8a0b-d6bcf0b6dd57",
       "name": "signup",
       "distinct_user_id": "eqR0ppLYH",
       "date": {
-        "from": 1604824249051,
-        "to": 1604824249051
+        "from": 1604824452722,
+        "to": 1604824452722
       },
       "os": "windows",
       "browser": "firefox",

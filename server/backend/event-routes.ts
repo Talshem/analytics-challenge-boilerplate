@@ -49,6 +49,9 @@ activeUsers: string[],
 weeklyRetention: number[]
 }
 
+
+// offset => slice (0, offset)
+
 router.post('/', (req: Request, res: Response) => {
   const eventDetails: Event = req.body;
   createEvent(eventDetails)
