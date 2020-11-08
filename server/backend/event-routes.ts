@@ -146,7 +146,7 @@ signUpEvents.filter((event: any) => signUpEvents.indexOf(event) % 7 === 0).map((
 let weeklyActiveUsers = events.filter((item : any) => item.date.from >= Date.parse(e.date) && item.date.from <= Date.parse(e.date) + OneWeek && item.name === 'login')
 let weeklyNewUsers = signUpEvents.filter((item : any) => Date.parse(item.date) >= Date.parse(e.date) && Date.parse(item.date) <= Date.parse(e.date) + OneWeek)
 
-console.log(weeklyNewUsers)
+console.log(e)
 
 let newUsers : string[] = [];
 for (let item of weeklyNewUsers) {
