@@ -25,7 +25,7 @@ import {
   isUserValidator,
 } from "./validators";
 import { split } from "lodash";
-import { OneHour } from "./timeFrames";
+import { OneHour, OneWeek } from "./timeFrames";
 
 
 const router = express.Router();
@@ -78,9 +78,10 @@ router.get('/all-filtered', (req: Request, res: Response) => {
 });
 
 router.get('/by-days/:offset', (req: Request, res: Response) => {
+const { offset } = req.params
 let array : any = [];
 let obj : any = {};
-let events = getAllEvents();
+let events = getAllEvents().slice(0, Number(offset));;
 for (let item of events){
 !isNaN(obj[new Date(item.date.from).toISOString().split('T')[0]]) ? 
 obj[new Date(item.date.from).toISOString().split('T')[0]] += 1 : 
@@ -98,9 +99,10 @@ res.send(array)
 
 
 router.get('/by-hours/:offset', (req: Request, res: Response) => {
+const { offset } = req.params
 let array : any = [];
 let obj : any = {};
-let events = getAllEvents();
+let events = getAllEvents().slice(0, Number(offset));
 for (let item of events) {
 !isNaN(obj[`${new Date(item.date.from).toISOString().split('T')[0]}, ${new Date(item.date.from).getHours()}:00`]) ? 
 obj[`${new Date(item.date.from).toISOString().split('T')[0]}, ${new Date(item.date.from).getHours()}:00`] += 1 : 
@@ -120,9 +122,10 @@ res.send(array)
 
 router.get('/retention', (req: Request, res: Response) => {
 const { dayZero } = req.query
-let array : any = [];
 let obj : any = {};
+let signUpEvents : any = [];
 let events = getEventsFromDay(Number(dayZero));
+
 for (let item of events) {
 if (!obj[new Date(item.date.from).toISOString().split('T')[0]]) obj[new Date(item.date.from).toISOString().split('T')[0]] = [];
 item.name === 'signup' && obj[new Date(item.date.from).toISOString().split('T')[0]].push(item.distinct_user_id)
@@ -133,27 +136,32 @@ let newObj = {
 date: key,
 users: value
 }
-array.push(newObj)
+signUpEvents.push(newObj)
 }
 
 let eventsData: RetentionWeek[] = []
-array.filter((event: any) => array.indexOf(event) % 7 === 0).map((e: any, index: number) => {
+//array.fliter (dates are % dayZero === 0 or % dayZero*oneDay === 0
+signUpEvents.filter((event: any) => signUpEvents.indexOf(event) % 7 === 0).map((e: any, index: number) => {
+
+let weeklyActiveUsers = events.filter((item : any) => item.date.from >= Date.parse(e.date) && item.date.from <= Date.parse(e.date) + OneWeek && item.name === 'login')
+let weeklyNewUsers = signUpEvents.filter((item : any) => Date.parse(item.date) >= Date.parse(e.date) && Date.parse(item.date) <= Date.parse(e.date) + OneWeek)
+
+console.log(weeklyNewUsers)
 
 let newUsers : string[] = [];
-for (let item of array.slice(array.indexOf(e), array.indexOf(e) + 7)) {
+for (let item of weeklyNewUsers) {
 newUsers = newUsers.concat(item.users)
 }
 
-
 let activeUsers : string[] = [];
-for (let item of events.filter(event => event.date.from >= Date.parse(e.date) && event.date.from <= Date.parse(e.date) + 1000 * 60 * 60 * 24 * 7 && event.name === 'login')) {
+for (let item of weeklyActiveUsers) {
 if (!activeUsers.includes(item.distinct_user_id)) activeUsers = activeUsers.concat(item.distinct_user_id);
 }
 
 let retentionWeek: RetentionWeek = {
 week: `Week ${index + 1}`,
 from: e.date,
-to: array[array.indexOf(e)+6] ? array[array.indexOf(e)+6].date : array[array.length-1].date,
+to: weeklyNewUsers[weeklyNewUsers.length-1].date,
 newUsers: newUsers,
 activeUsers: activeUsers ,
 weeklyRetention: []

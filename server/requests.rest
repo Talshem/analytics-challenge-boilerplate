@@ -1,0 +1,4 @@
+
+
+GET http://localhost:3001/events/retention?dayZero=1601543622678
+Content-Type: application/json
