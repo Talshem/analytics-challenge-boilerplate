@@ -143,7 +143,7 @@ newUsers = newUsers.concat(item.users)
 
 
 let activeUsers : string[] = [];
-for (let item of events.filter(event => event.date.from >= Date.parse(e.date) && event.date.from <= Date.parse(e.date) + 1000 * 60 * 60 * 24 * 7)) {
+for (let item of events.filter(event => event.date.from >= Date.parse(e.date) && event.date.from <= Date.parse(e.date) + 1000 * 60 * 60 * 24 * 7 && event.name === 'login')) {
 if (!activeUsers.includes(item.distinct_user_id)) activeUsers = activeUsers.concat(item.distinct_user_id);
 }
 
