@@ -193,7 +193,9 @@ db.get(EVENT_TABLE)
 .take(offset)
 .value();
 
-
+export const getEventByTypeTEST = (type: eventName, dayZero: number) => db.get(EVENT_TABLE).filter({name: type}).filter((event: any) => event.date >= dayZero && event.date <= dayZero + OneWeek * 6).value();
+export const getWeeklySessionsTEST = (start: number, end: number) => db.get(EVENT_TABLE).filter((event: any) => event.date >= start && event.date < end).value();
+export const getDailySessionsTEST = (start: number, end: number) => db.get(EVENT_TABLE).filter((event: any) => event.date >= start && event.date < end).value();
 
 // Search
 export const cleanSearchQuery = (query: string) => query.replace(/[^a-zA-Z0-9]/g, "");

@@ -45,12 +45,12 @@ setUsers(data.users)
         <TableRow>
 <TableData> <strong>All Users</strong> <br/> <span style={{color:'grey'}}> {users} users </span> </TableData>
 <TableData style={{background:'#f0f0f0'}}> 100.00% </TableData>
-{events.map((e, index) => <TableData key={index} retention={(e.activeUsers.length / users * 100)}>{(e.activeUsers.length / users * 100).toFixed(2)}%</TableData>)}
+{events.map((e, index) => <TableData key={index} retention={(e.activeUsers / users * 100)}>{(e.activeUsers / users * 100).toFixed(2)}%</TableData>)}
         </TableRow>
 
 {events.map((e, index) => { return (
 <TableRow key={index}>
-<TableData>{new Date(e.from).toDateString().split(' ').slice(1).join(' ')} - {new Date(e.to).toDateString().split(' ').slice(1).join(' ')} <br/> <span style={{color:'grey'}}> {e.newUsers.length} users </span></TableData>
+<TableData>{new Date(e.from).toDateString().split(' ').slice(1).join(' ')} - {new Date(e.to).toDateString().split(' ').slice(1).join(' ')} <br/> <span style={{color:'grey'}}> {e.newUser} users </span></TableData>
 <TableData style={{background:'#f0f0f0'}}>100.00%</TableData>
 {e.weeklyRetention.map((e: number, index: number) => <TableData key={index} retention={e}>{e.toFixed(2)}%</TableData>)}
 </TableRow>

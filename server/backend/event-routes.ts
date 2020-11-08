@@ -15,6 +15,9 @@ getEventById,
 getEventsFiltered,
 getEventsInDay,
 getEventByType,
+getEventByTypeTEST,
+getWeeklySessionsTEST,
+getDailySessionsTEST,
 saveEvent,
 getWeeklySessions,
 getDailySessions
@@ -49,8 +52,8 @@ interface RetentionWeek {
 week: string,
 from: string,
 to: string,
-newUsers: string[],
-activeUsers: string[],
+newUsers: any,
+activeUsers: any,
 weeklyRetention: number[]
 }
 
@@ -87,114 +90,235 @@ const { type, offset, browser, sorting, search } = req.query
   res.json({events: events})
 });
 
-router.get('/by-days/:offset', (req: Request, res: Response) => {
-const offset = req.params.offset || 0;
-let array : any = [];
-let obj : any = {};
-let events = getWeeklySessions(new Date().getTime() + OneDay - OneDay * Number(offset));
+// router.get('/by-days/:offset', (req: Request, res: Response) => {
+// const offset = req.params.offset || 0;
+// let array : any = [];
+// let obj : any = {};
+// let events = getWeeklySessions(new Date().getTime() + OneDay - OneDay * Number(offset));
 
-for (let i=new Date().getTime()+OneDay-OneDay*Number(offset)-OneWeek;i<new Date().getTime()+OneDay-OneDay*Number(offset); i+= OneDay){
-  obj[`${new Date(i).toISOString().split('T')[0]}`] = 0
+// for (let i=new Date().getTime()+OneDay-OneDay*Number(offset)-OneWeek;i<new Date().getTime()+OneDay-OneDay*Number(offset); i+= OneDay){
+//   obj[`${new Date(i).toISOString().split('T')[0]}`] = 0
+//   }
+
+// for (let item of events){
+// obj[new Date(item.date.from).toISOString().split('T')[0]] += 1
+// }
+// for (const [key, value] of Object.entries(obj)) {
+// let newObj = {
+// date: key,
+// count: value
+// }
+// array.push(newObj)
+// }
+// res.send(array)
+// });
+
+router.get('/by-days/:offset', (req: Request, res: Response) => {
+  const offset = req.params.offset || 0;
+  let array : any = [];
+  let obj : any = {};
+  // let today = Date.parse(new Date().toISOString().split('T')[0])
+  let end = new Date().getTime() - OneDay * Number(offset)
+  let start = end - OneWeek
+  let events = getWeeklySessionsTEST(start, end);
+  
+  for (let i=start+OneDay;i<=end; i+= OneDay){
+    obj[`${new Date(i).toISOString().split('T')[0]}`] = 0
+    }
+
+  for (let item of events as any){
+ if(!isNaN(obj[new Date(item.date).toISOString().split('T')[0]])) obj[new Date(item.date).toISOString().split('T')[0]] += 1
   }
 
-for (let item of events){
-obj[new Date(item.date.from).toISOString().split('T')[0]] += 1
-}
-for (const [key, value] of Object.entries(obj)) {
-let newObj = {
-date: key,
-count: value
-}
-array.push(newObj)
-}
-res.send(array)
-});
+  for (const [key, value] of Object.entries(obj)) {
+  let newObj = {
+  date: key,
+  count: value
+  }
+  array.push(newObj)
+  }
+  res.send(array)
+  });
 
+
+// router.get('/by-hours/:offset', (req: Request, res: Response) => {
+// const offset = req.params.offset || 0;
+// let array : any = [];
+// let obj : any = {};
+// let events = getDailySessions(new Date().getTime() + OneDay - OneDay * Number(offset));
+
+// for (let i=new Date().getTime()-OneDay*Number(offset);i<new Date().getTime()-OneDay*Number(offset)+OneDay; i+= OneHour){
+// obj[`${new Date(i).toISOString().split('T')[0]}, ${new Date(i).getHours()}:00`] = 0
+// }
+
+// for (let item of events) {
+// obj[`${new Date(item.date.from).toISOString().split('T')[0]}, ${new Date(item.date.from).getHours()}:00`] += 1 
+// }
+
+// for (const [key, value] of Object.entries(obj)) {
+// let newObj = {
+// date: key,
+// count: value
+// }
+// array.push(newObj)
+// }
+// res.send(array)
+// });
 
 router.get('/by-hours/:offset', (req: Request, res: Response) => {
-const offset = req.params.offset || 0;
-let array : any = [];
-let obj : any = {};
-let events = getDailySessions(new Date().getTime() + OneDay - OneDay * Number(offset));
+  const offset = req.params.offset || 0;
+  let array : any = [];
+  let obj : any = {};
+  let end = new Date().getTime() - OneDay * Number(offset)
+  let start = end - OneDay
+  let events = getDailySessionsTEST(start, end);
 
-for (let i=new Date().getTime()-OneDay*Number(offset);i<new Date().getTime()-OneDay*Number(offset)+OneDay; i+= OneHour){
-obj[`${new Date(i).toISOString().split('T')[0]}, ${new Date(i).getHours()}:00`] = 0
-}
+  for (let i=start+OneHour;i<=end; i+= OneHour){
+  obj[`${new Date(i).toISOString().split('T')[0]}, ${new Date(i).getHours()}:00`] = 0
+  }
 
-for (let item of events) {
-obj[`${new Date(item.date.from).toISOString().split('T')[0]}, ${new Date(item.date.from).getHours()}:00`] += 1 
-}
+  for (let item of events as any) {
+  if(obj[`${new Date(item.date).toISOString().split('T')[0]}, ${new Date(item.date).getHours()}:00`]){
+  obj[`${new Date(item.date).toISOString().split('T')[0]}, ${new Date(item.date).getHours()}:00`] += 1
+  } 
+  }
 
-for (const [key, value] of Object.entries(obj)) {
-let newObj = {
-date: key,
-count: value
-}
-array.push(newObj)
-}
-res.send(array)
-});
+  for (const [key, value] of Object.entries(obj)) {
+  let newObj = {
+  date: key,
+  count: value
+  }
+  array.push(newObj)
+  }
+  res.send(array)
+  });
 
+
+// router.get('/retention', (req: Request, res: Response) => {
+// const { dayZero } = req.query
+// let obj : any = {};
+// let signUpEvents : any = [];
+
+// for (let i=Number(dayZero); i <= Number(dayZero) + OneWeek * 6; i += OneDay){
+// obj[new Date(i).toISOString().split('T')[0]] = []
+// }
+
+// for (let item of getEventByType('signup', Number(dayZero))) {
+// obj[new Date(item.date.from).toISOString().split('T')[0]].push(item.distinct_user_id)
+// }
+
+// for (const [key, value] of Object.entries(obj)) {
+// let newObj = {
+// date: key,
+// users: value
+// }
+// signUpEvents.push(newObj)
+// }
+
+// let eventsData: RetentionWeek[] = []
+// signUpEvents.filter((event: any) => signUpEvents.indexOf(event) % 8 === 0).map((e: any, index: number) => {
+
+// let weeklyEvents = getEventByType('login', Number(dayZero)).filter((item : any) => item.date.from >= Date.parse(e.date) && item.date.from <= Date.parse(e.date) + OneWeek)
+// let weeklyNewUsers = signUpEvents.filter((item : any) => Date.parse(item.date) >= Date.parse(e.date) && Date.parse(item.date) <= Date.parse(e.date) + OneWeek)
+
+// let newUsers : string[] = [];
+// for (let item of weeklyNewUsers) {
+// newUsers = newUsers.concat(item.users)
+// }
+
+// let activeUsers : string[] = [];
+// for (let item of weeklyEvents) {
+// if (!activeUsers.includes(item.distinct_user_id)) activeUsers = activeUsers.concat(item.distinct_user_id);
+// }
+
+// let retentionWeek: RetentionWeek = {
+// week: `Week ${index + 1}`,
+// from: e.date,
+// to: weeklyNewUsers[weeklyNewUsers.length-1].date,
+// signedUsers: newUsers,
+// newUsers: newUsers.length,
+// activeUsers: activeUsers,
+// weeklyRetention: []
+// }
+// eventsData.push(retentionWeek)
+// });
+
+// for (let item of eventsData) {
+// for (let i=eventsData.indexOf(item)+1; i < eventsData.length; i++) {
+// let remaining = 0;
+// for (let user of item.signedUsers){
+// if (eventsData[i].activeUsers.includes(user)) remaining += 1;
+// }
+// item.weeklyRetention.push(item.newUsers > 0 ? remaining / item.newUsers * 100 : 0)
+// }
+// }
+// res.send({events: eventsData, users: getEventByType('signup', Number(dayZero)).length})
+// })
+
+// for the test
 router.get('/retention', (req: Request, res: Response) => {
-const { dayZero } = req.query
-let obj : any = {};
-let signUpEvents : any = [];
+  const { dayZero } = req.query
+  let obj : any = {};
+  let signUpEvents : any = [];
+  
 
-for (let i=Number(dayZero); i <= Number(dayZero) + OneWeek * 6; i += OneDay){
-obj[new Date(i).toISOString().split('T')[0]] = []
-}
+  
+  for (let i=Number(dayZero); i < Number(dayZero) + OneWeek * 6 ; i += OneDay){
+  obj[new Date(i).toISOString().split('T')[0]] = []
+  }
+  
+  for (let item of getEventByTypeTEST('signup', Number(dayZero)) as any) {
+  obj[new Date(item.date).toISOString().split('T')[0]].push(item.distinct_user_id)
+  }
 
-for (let item of getEventByType('signup', Number(dayZero))) {
-obj[new Date(item.date.from).toISOString().split('T')[0]].push(item.distinct_user_id)
-}
+  for (const [key, value] of Object.entries(obj)) {
+  let newObj = {
+  date: key,
+  users: value
+  }
+  signUpEvents.push(newObj)
+  }
 
-for (const [key, value] of Object.entries(obj)) {
-let newObj = {
-date: key,
-users: value
-}
-signUpEvents.push(newObj)
-}
+  let eventsData: RetentionWeek[] = []
+  signUpEvents.filter((event: any) => signUpEvents.indexOf(event) % 7 === 0).map((e: any, index: number) => {
+  
+  let weeklyEvents = getEventByTypeTEST('login', Number(dayZero)).filter((item : any) => item.date >= Date.parse(e.date) && item.date <= Date.parse(e.date) + OneDay*6)
+  let weeklyNewUsers = signUpEvents.filter((item : any) => Date.parse(item.date) >= Date.parse(e.date) && Date.parse(item.date) <= Date.parse(e.date) + OneDay*6)
 
-let eventsData: RetentionWeek[] = []
-signUpEvents.filter((event: any) => signUpEvents.indexOf(event) % 8 === 0).map((e: any, index: number) => {
-
-let weeklyEvents = getEventByType('login', Number(dayZero)).filter((item : any) => item.date.from >= Date.parse(e.date) && item.date.from <= Date.parse(e.date) + OneWeek)
-let weeklyNewUsers = signUpEvents.filter((item : any) => Date.parse(item.date) >= Date.parse(e.date) && Date.parse(item.date) <= Date.parse(e.date) + OneWeek)
-
-let newUsers : string[] = [];
-for (let item of weeklyNewUsers) {
-newUsers = newUsers.concat(item.users)
-}
-
-let activeUsers : string[] = [];
-for (let item of weeklyEvents) {
-if (!activeUsers.includes(item.distinct_user_id)) activeUsers = activeUsers.concat(item.distinct_user_id);
-}
-
-let retentionWeek: RetentionWeek = {
-week: `Week ${index + 1}`,
-from: e.date,
-to: weeklyNewUsers[weeklyNewUsers.length-1].date,
-newUsers: newUsers,
-activeUsers: activeUsers,
-weeklyRetention: []
-}
-eventsData.push(retentionWeek)
-});
-
-for (let item of eventsData) {
-for (let i=eventsData.indexOf(item)+1; i < eventsData.length; i++) {
-let remaining = 0;
-for (let user of item.newUsers){
-if (eventsData[i].activeUsers.includes(user)) remaining += 1;
-}
-item.weeklyRetention.push(item.newUsers.length > 0 ? remaining / item.newUsers.length * 100 : 0)
-}
-}
-res.send({events: eventsData, users: getEventByType('signup', Number(dayZero)).length})
-})
-
+  let newUsers : string[] = [];
+  for (let item of weeklyNewUsers) {
+  newUsers = newUsers.concat(item.users)
+  }
+  
+  let activeUsers : string[] = [];
+  for (let item of weeklyEvents) {
+  if (!activeUsers.includes(item.distinct_user_id)) activeUsers = activeUsers.concat(item.distinct_user_id);
+  }
+  
+  let retentionWeek: RetentionWeek = {
+  week: `Week ${index + 1}`,
+  from: e.date,
+  to: weeklyNewUsers[weeklyNewUsers.length-1].date,
+  newUsers: newUsers,
+  activeUsers: activeUsers,
+  weeklyRetention: [100]
+  }
+  eventsData.push(retentionWeek)
+  });
+  
+  for (let item of eventsData) {
+  for (let i=eventsData.indexOf(item)+1; i < eventsData.length; i++) {
+  let remaining = 0;
+  for (let user of item.newUsers){
+  if (eventsData[i].activeUsers.includes(user)) remaining += 1;
+  }
+  item.weeklyRetention.push(item.newUsers.length > 0 ? remaining / item.newUsers.length * 100 : 0)
+  }
+  item.activeUsers = item.activeUsers.length
+  item.newUsers = item.newUsers.length
+  }
+  res.send(eventsData)
+  })
 
 router.get('/:eventId',(req : Request, res : Response) => {
 const { eventId } = req.params
