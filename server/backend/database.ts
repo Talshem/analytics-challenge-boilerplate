@@ -179,6 +179,16 @@ export const getEventsInDay = (dayZero: number) => db.get(EVENT_TABLE).sortBy('d
 export const getEventById = (eventId: string) => db.get(EVENT_TABLE).find({_id: eventId}).value();
 export const getEventsFromDay = (dayZero: number) => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from >= dayZero && event.date.from <= dayZero + OneWeek * 6).value();
 
+export const getEventsFiltered = (type: string, browser: string, offset: number, search: string) =>
+db.get(EVENT_TABLE)
+// @ts-ignore
+.filter(item => item.session_id.includes(search) && item.name.includes(type) && item.browser.includes(browser))
+.sortBy('date.from')
+.take(offset)
+.value();
+
+
+
 // Search
 export const cleanSearchQuery = (query: string) => query.replace(/[^a-zA-Z0-9]/g, "");
 

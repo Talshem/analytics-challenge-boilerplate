@@ -12,6 +12,7 @@ getAllEventsWeekly,
 getEventsToday,
 getEventsFromDay,
 getEventById,
+getEventsFiltered,
 getEventsInDay
 } from "./database";
 import { Event, weeklyRetentionObject } from "../../client/src/models/event";
@@ -74,7 +75,14 @@ router.get('/week', (req: Request, res: Response) => {
 });
 
 router.get('/all-filtered', (req: Request, res: Response) => {
-  res.send('/all-filtered')
+const { type, offset, browser, sorting, search } = req.query
+  let events = getEventsFiltered(
+  type ? type : '',
+  browser ? browser : '',
+  offset ? Number(offset) : 100,
+  search ? search : '')
+  if (sorting === '-date') events = events.reverse();
+  res.send(events)
 });
 
 router.get('/by-days/:offset', (req: Request, res: Response) => {
