@@ -38,7 +38,7 @@ const fetchData = async () => {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Line strokeWidth={3} type="monotone" dataKey="sessions" stroke="#8884d8" activeDot={{ r: 8 }} />
+        <Line strokeWidth={3} type="monotone" dataKey="count" stroke="#8884d8" activeDot={{ r: 8 }} />
       </LineChart>
       </>
     )

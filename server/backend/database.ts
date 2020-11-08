@@ -182,6 +182,9 @@ export const getEventById = (eventId: string) => db.get(EVENT_TABLE).find({_id: 
 export const getEventByType = (type: eventName, dayZero: number) => db.get(EVENT_TABLE).filter({name: type}).filter(event => event.date.from >= dayZero && event.date.from <= dayZero + OneWeek * 6).value();
 export const getEventsFromDay = (dayZero: number) => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from >= dayZero && event.date.from <= dayZero + OneWeek * 6).value();
 
+export const getWeeklySessions = (date: number) => db.get(EVENT_TABLE).filter(event => event.date.from >= date - OneWeek && event.date.from <= date).value();
+export const getDailySessions = (date: number) => db.get(EVENT_TABLE).filter(event => event.date.from >= date - OneDay && event.date.from <= date).value();
+
 export const getEventsFiltered = (type: string, browser: string, offset: number, search: string) =>
 db.get(EVENT_TABLE)
 // @ts-ignore

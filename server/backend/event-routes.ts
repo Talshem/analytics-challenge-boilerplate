@@ -15,7 +15,9 @@ getEventById,
 getEventsFiltered,
 getEventsInDay,
 getEventByType,
-saveEvent
+saveEvent,
+getWeeklySessions,
+getDailySessions
 } from "./database";
 import { Event, weeklyRetentionObject } from "../../client/src/models/event";
 import { User } from "../../client/src/models/user";
@@ -86,47 +88,52 @@ const { type, offset, browser, sorting, search } = req.query
 });
 
 router.get('/by-days/:offset', (req: Request, res: Response) => {
-const { offset } = req.params
+const offset = req.params.offset || 0;
 let array : any = [];
 let obj : any = {};
-let events = getAllEvents();
+let events = getWeeklySessions(new Date().getTime() + OneDay - OneDay * Number(offset));
+
+for (let i=new Date().getTime()+OneDay-OneDay*Number(offset)-OneWeek;i<new Date().getTime()+OneDay-OneDay*Number(offset); i+= OneDay){
+  obj[`${new Date(i).toISOString().split('T')[0]}`] = 0
+  }
+
 for (let item of events){
-!isNaN(obj[new Date(item.date.from).toISOString().split('T')[0]]) ? 
-obj[new Date(item.date.from).toISOString().split('T')[0]] += 1 : 
-obj[new Date(item.date.from).toISOString().split('T')[0]] = 0
+obj[new Date(item.date.from).toISOString().split('T')[0]] += 1
 }
 for (const [key, value] of Object.entries(obj)) {
 let newObj = {
 date: key,
-sessions: value
+count: value
 }
 array.push(newObj)
 }
-res.send(array.slice(Number(offset), Number(offset) + 7))
+res.send(array)
 });
 
 
 router.get('/by-hours/:offset', (req: Request, res: Response) => {
-const { offset } = req.params
+const offset = req.params.offset || 0;
 let array : any = [];
 let obj : any = {};
-let events = getAllEvents();
-for (let item of events) {
-!isNaN(obj[`${new Date(item.date.from).toISOString().split('T')[0]}, ${new Date(item.date.from).getHours()}:00`]) ? 
-obj[`${new Date(item.date.from).toISOString().split('T')[0]}, ${new Date(item.date.from).getHours()}:00`] += 1 : 
-obj[`${new Date(item.date.from).toISOString().split('T')[0]}, ${new Date(item.date.from).getHours()}:00`] = 0
+let events = getDailySessions(new Date().getTime() + OneDay - OneDay * Number(offset));
+
+for (let i=new Date().getTime()-OneDay*Number(offset);i<new Date().getTime()-OneDay*Number(offset)+OneDay; i+= OneHour){
+obj[`${new Date(i).toISOString().split('T')[0]}, ${new Date(i).getHours()}:00`] = 0
 }
+
+for (let item of events) {
+obj[`${new Date(item.date.from).toISOString().split('T')[0]}, ${new Date(item.date.from).getHours()}:00`] += 1 
+}
+
 for (const [key, value] of Object.entries(obj)) {
 let newObj = {
 date: key,
-sessions: value
+count: value
 }
 array.push(newObj)
 }
-res.send(array.slice(Number(offset), Number(offset) + 24))
+res.send(array)
 });
-
-
 
 router.get('/retention', (req: Request, res: Response) => {
 const { dayZero } = req.query
