@@ -138,8 +138,8 @@ for (let i=Number(dayZero); i <= Number(dayZero) + OneWeek * 6; i += OneDay){
 obj[new Date(i).toISOString().split('T')[0]] = []
 }
 
-for (let item of events) {
-item.name === 'signup' && obj[new Date(item.date.from).toISOString().split('T')[0]].push(item.distinct_user_id)
+for (let item of events.filter(item => item.name ==='signup')) {
+obj[new Date(item.date.from).toISOString().split('T')[0]].push(item.distinct_user_id)
 }
 
 for (const [key, value] of Object.entries(obj)) {
@@ -171,7 +171,7 @@ week: `Week ${index + 1}`,
 from: e.date,
 to: weeklyNewUsers[weeklyNewUsers.length-1].date,
 newUsers: newUsers,
-activeUsers: activeUsers ,
+activeUsers: activeUsers,
 weeklyRetention: []
 }
 eventsData.push(retentionWeek)
