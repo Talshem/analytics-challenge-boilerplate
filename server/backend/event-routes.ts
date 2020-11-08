@@ -56,70 +56,18 @@ router.post('/', (req: Request, res: Response) => {
 });
 
 router.get('/all', (req: Request, res: Response) => {
-  let data = []
   let events = getAllEvents();
-  let users = getAllUsers();
-  for (let item of events) {
-      let user = users.find((person) => person.id === item.distinct_user_id) as User
-      let obj = {
-      eventId: item._id,
-      userId: user.id,
-      userFullName: `${user.firstName} ${user.lastName}`,
-      date: item.date,
-      eventName: item.name,
-      os: item.os,
-      browser: item.browser,
-      geolocation: item.geolocation,
-      url: item.url.split('3000/')[1]
-      }
-      data.push(obj)
-    }
-
-  res.send(data)
+  res.send(events)
 });
 
 router.get('/today', (req: Request, res: Response) => {
-  let data = []
   let events = getEventsToday();
-  let users = getAllUsers();
-  for (let item of events) {
-      let user = users.find((person) => person.id === item.distinct_user_id) as User
-      let obj = {
-      eventId: item._id,
-      userId: user.id,
-      userFullName: `${user.firstName} ${user.lastName}`,
-      date: item.date,
-      eventName: item.name,
-      os: item.os,
-      browser: item.browser,
-      geolocation: item.geolocation,
-      url: item.url.split('3000/')[1]
-      }
-      data.push(obj)
-    }
-  res.send(data)
+  res.send(events)
 });
 
 router.get('/week', (req: Request, res: Response) => {
-  let data = []
   let events = getAllEventsWeekly();
-  let users = getAllUsers();
-  for (let item of events) {
-      let user = users.find((person) => person.id === item.distinct_user_id) as User
-      let obj = {
-      eventId: item._id,
-      userId: user.id,
-      userFullName: `${user.firstName} ${user.lastName}`,
-      date: item.date,
-      eventName: item.name,
-      os: item.os,
-      browser: item.browser,
-      geolocation: item.geolocation,
-      url: item.url
-      }
-      data.push(obj)
-    }
-  res.send(data)
+  res.send(events)
 });
 
 router.get('/all-filtered', (req: Request, res: Response) => {
