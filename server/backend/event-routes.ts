@@ -145,7 +145,7 @@ signUpEvents.push(newObj)
 let eventsData: RetentionWeek[] = []
 signUpEvents.filter((event: any) => signUpEvents.indexOf(event) % 8 === 0).map((e: any, index: number) => {
 
-let weeklyActiveUsers = events.filter((item : any) => item.date.from >= Date.parse(e.date) && item.date.from <= Date.parse(e.date) + OneWeek && item.name === 'login')
+let weeklyEvents = events.filter((item : any) => item.date.from >= Date.parse(e.date) && item.date.from <= Date.parse(e.date) + OneWeek && item.name === 'login')
 let weeklyNewUsers = signUpEvents.filter((item : any) => Date.parse(item.date) >= Date.parse(e.date) && Date.parse(item.date) <= Date.parse(e.date) + OneWeek)
 
 let newUsers : string[] = [];
@@ -154,7 +154,7 @@ newUsers = newUsers.concat(item.users)
 }
 
 let activeUsers : string[] = [];
-for (let item of weeklyActiveUsers) {
+for (let item of weeklyEvents) {
 if (!activeUsers.includes(item.distinct_user_id)) activeUsers = activeUsers.concat(item.distinct_user_id);
 }
 
