@@ -13,7 +13,8 @@ getEventsToday,
 getEventsFromDay,
 getEventById,
 getEventsFiltered,
-getEventsInDay
+getEventsInDay,
+getEventByType
 } from "./database";
 import { Event, weeklyRetentionObject } from "../../client/src/models/event";
 import { User } from "../../client/src/models/user";
@@ -49,9 +50,6 @@ newUsers: string[],
 activeUsers: string[],
 weeklyRetention: number[]
 }
-
-
-// offset => slice (0, offset)
 
 router.post('/', (req: Request, res: Response) => {
   const eventDetails: Event = req.body;
@@ -89,7 +87,7 @@ router.get('/by-days/:offset', (req: Request, res: Response) => {
 const { offset } = req.params
 let array : any = [];
 let obj : any = {};
-let events = getAllEvents().slice(0, Number(offset));;
+let events = getAllEvents();
 for (let item of events){
 !isNaN(obj[new Date(item.date.from).toISOString().split('T')[0]]) ? 
 obj[new Date(item.date.from).toISOString().split('T')[0]] += 1 : 
@@ -102,7 +100,7 @@ sessions: value
 }
 array.push(newObj)
 }
-res.send(array)
+res.send(array.slice(Number(offset), Number(offset) + 7))
 });
 
 
@@ -110,7 +108,7 @@ router.get('/by-hours/:offset', (req: Request, res: Response) => {
 const { offset } = req.params
 let array : any = [];
 let obj : any = {};
-let events = getAllEvents().slice(0, Number(offset));
+let events = getAllEvents();
 for (let item of events) {
 !isNaN(obj[`${new Date(item.date.from).toISOString().split('T')[0]}, ${new Date(item.date.from).getHours()}:00`]) ? 
 obj[`${new Date(item.date.from).toISOString().split('T')[0]}, ${new Date(item.date.from).getHours()}:00`] += 1 : 
@@ -123,7 +121,7 @@ sessions: value
 }
 array.push(newObj)
 }
-res.send(array)
+res.send(array.slice(Number(offset), Number(offset) + 24))
 });
 
 
@@ -132,13 +130,12 @@ router.get('/retention', (req: Request, res: Response) => {
 const { dayZero } = req.query
 let obj : any = {};
 let signUpEvents : any = [];
-let events = getEventsFromDay(Number(dayZero));
 
 for (let i=Number(dayZero); i <= Number(dayZero) + OneWeek * 6; i += OneDay){
 obj[new Date(i).toISOString().split('T')[0]] = []
 }
 
-for (let item of events.filter(item => item.name ==='signup')) {
+for (let item of getEventByType('signup', Number(dayZero))) {
 obj[new Date(item.date.from).toISOString().split('T')[0]].push(item.distinct_user_id)
 }
 
@@ -153,7 +150,7 @@ signUpEvents.push(newObj)
 let eventsData: RetentionWeek[] = []
 signUpEvents.filter((event: any) => signUpEvents.indexOf(event) % 8 === 0).map((e: any, index: number) => {
 
-let weeklyEvents = events.filter((item : any) => item.date.from >= Date.parse(e.date) && item.date.from <= Date.parse(e.date) + OneWeek && item.name === 'login')
+let weeklyEvents = getEventByType('login', Number(dayZero)).filter((item : any) => item.date.from >= Date.parse(e.date) && item.date.from <= Date.parse(e.date) + OneWeek)
 let weeklyNewUsers = signUpEvents.filter((item : any) => Date.parse(item.date) >= Date.parse(e.date) && Date.parse(item.date) <= Date.parse(e.date) + OneWeek)
 
 let newUsers : string[] = [];
@@ -186,7 +183,7 @@ if (eventsData[i].activeUsers.includes(user)) remaining += 1;
 item.weeklyRetention.push(item.newUsers.length > 0 ? remaining / item.newUsers.length * 100 : 0)
 }
 }
-res.send({events: eventsData, users: events.filter(event => event.name === 'signup').length})
+res.send({events: eventsData, users: getEventByType('signup', Number(dayZero)).length})
 })
 
 

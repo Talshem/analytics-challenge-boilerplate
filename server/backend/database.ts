@@ -49,7 +49,8 @@ import {
   NotificationResponseItem,
   TransactionQueryPayload,
   DefaultPrivacyLevel,
-  Event
+  Event,
+  eventName
 } from "../../client/src/models";
 import Fuse from "fuse.js";
 import {
@@ -177,6 +178,7 @@ export const getAllEventsWeekly = () => db.get(EVENT_TABLE).sortBy('date.from').
 export const getEventsToday = () => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from > Date.now() - OneDay).value();
 export const getEventsInDay = (dayZero: number) => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from >= dayZero && event.date.from <= dayZero + OneDay).value();
 export const getEventById = (eventId: string) => db.get(EVENT_TABLE).find({_id: eventId}).value();
+export const getEventByType = (type: eventName, dayZero: number) => db.get(EVENT_TABLE).filter({name: type}).filter(event => event.date.from >= dayZero && event.date.from <= dayZero + OneWeek * 6).value();
 export const getEventsFromDay = (dayZero: number) => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from >= dayZero && event.date.from <= dayZero + OneWeek * 6).value();
 
 export const getEventsFiltered = (type: string, browser: string, offset: number, search: string) =>

@@ -12,7 +12,7 @@ const [dateTo, setDateTo] = useState('2020-10-25')
 
 useEffect(() => {
 const fetchData = async () => {
-  const { data } = await httpClient.get(`http://localhost:3001/events/by-hours/h`)
+  const { data } = await httpClient.get(`http://localhost:3001/events/by-hours/0`)
   let from = data.find((object: any) =>
   Number(object.date.split('-')[0]) === Number(dateFrom.substr(0,4)) &&
   Number(object.date.split('-')[1]) === Number(dateFrom.substr(5,2)) &&
