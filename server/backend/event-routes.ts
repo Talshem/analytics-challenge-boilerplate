@@ -25,7 +25,7 @@ import {
   isUserValidator,
 } from "./validators";
 import { split } from "lodash";
-import { OneHour, OneWeek } from "./timeFrames";
+import { OneDay, OneHour, OneWeek } from "./timeFrames";
 
 
 const router = express.Router();
@@ -126,8 +126,11 @@ let obj : any = {};
 let signUpEvents : any = [];
 let events = getEventsFromDay(Number(dayZero));
 
+for (let i=Number(dayZero); i <= Number(dayZero) + OneWeek * 6; i += OneDay){
+obj[new Date(i).toISOString().split('T')[0]] = []
+}
+
 for (let item of events) {
-if (!obj[new Date(item.date.from).toISOString().split('T')[0]]) obj[new Date(item.date.from).toISOString().split('T')[0]] = [];
 item.name === 'signup' && obj[new Date(item.date.from).toISOString().split('T')[0]].push(item.distinct_user_id)
 }
 
@@ -140,13 +143,10 @@ signUpEvents.push(newObj)
 }
 
 let eventsData: RetentionWeek[] = []
-//array.fliter (dates are % dayZero === 0 or % dayZero*oneDay === 0
-signUpEvents.filter((event: any) => signUpEvents.indexOf(event) % 7 === 0).map((e: any, index: number) => {
+signUpEvents.filter((event: any) => signUpEvents.indexOf(event) % 8 === 0).map((e: any, index: number) => {
 
 let weeklyActiveUsers = events.filter((item : any) => item.date.from >= Date.parse(e.date) && item.date.from <= Date.parse(e.date) + OneWeek && item.name === 'login')
 let weeklyNewUsers = signUpEvents.filter((item : any) => Date.parse(item.date) >= Date.parse(e.date) && Date.parse(item.date) <= Date.parse(e.date) + OneWeek)
-
-console.log(e)
 
 let newUsers : string[] = [];
 for (let item of weeklyNewUsers) {
@@ -175,7 +175,7 @@ let remaining = 0;
 for (let user of item.newUsers){
 if (eventsData[i].activeUsers.includes(user)) remaining += 1;
 }
-item.weeklyRetention.push(remaining / item.newUsers.length * 100)
+item.weeklyRetention.push(item.newUsers.length > 0 ? remaining / item.newUsers.length * 100 : 0)
 }
 }
 res.send({events: eventsData, users: events.filter(event => event.name === 'signup').length})
