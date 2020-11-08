@@ -5101,14 +5101,11 @@
       "url": "http://localhost3000/login"
     },
     {
-      "_id": "uDf-6uymE",
-      "session_id": "0676d7db-b998-49d9-ba35-645df319e69c",
+      "_id": "Pnq5MmIZ6Z_",
+      "session_id": "ebd9da74-3965-43c8-932f-a47b6bffd380",
       "name": "signup",
       "distinct_user_id": "eqR0ppLYH",
-      "date": {
-        "from": 1604843063889,
-        "to": 1604843063889
-      },
+      "date": 1601784000001,
       "os": "windows",
       "browser": "firefox",
       "geolocation": {

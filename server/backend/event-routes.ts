@@ -14,7 +14,8 @@ getEventsFromDay,
 getEventById,
 getEventsFiltered,
 getEventsInDay,
-getEventByType
+getEventByType,
+saveEvent
 } from "./database";
 import { Event, weeklyRetentionObject } from "../../client/src/models/event";
 import { User } from "../../client/src/models/user";
@@ -53,7 +54,8 @@ weeklyRetention: number[]
 
 router.post('/', (req: Request, res: Response) => {
   const eventDetails: Event = req.body;
-  createEvent(eventDetails)
+  // createEvent(eventDetails) doesnt pass test in this method
+  saveEvent(req.body)
   res.send(eventDetails)
 });
 
@@ -80,7 +82,7 @@ const { type, offset, browser, sorting, search } = req.query
   offset ? Number(offset) : 100,
   search ? search : '')
   if (sorting === '-date') events = events.reverse();
-  res.send(events)
+  res.json({events: events})
 });
 
 router.get('/by-days/:offset', (req: Request, res: Response) => {

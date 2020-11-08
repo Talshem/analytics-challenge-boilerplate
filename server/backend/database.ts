@@ -169,13 +169,14 @@ export const createEvent = (eventDetails: Event)  => {
   return event;
 };
 
-const saveEvent = (event: Event) => {
-  db.get(EVENT_TABLE).push(event).write();
+export const saveEvent = (event: Event) => {
+ db.get(EVENT_TABLE).push(event).write();
 };
 
-export const getAllEvents = () => db.get(EVENT_TABLE).sortBy('date.from').value();
-export const getAllEventsWeekly = () => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from > Date.now() - OneWeek).value();
-export const getEventsToday = () => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from > Date.now() - OneDay).value();
+
+export const getAllEvents = () => db.get(EVENT_TABLE).value();
+export const getAllEventsWeekly = () => db.get(EVENT_TABLE).filter(event => event.date.from > Date.now() - OneWeek).value();
+export const getEventsToday = () => db.get(EVENT_TABLE).filter(event => event.date.from > Date.now() - OneDay).value();
 export const getEventsInDay = (dayZero: number) => db.get(EVENT_TABLE).sortBy('date.from').filter(event => event.date.from >= dayZero && event.date.from <= dayZero + OneDay).value();
 export const getEventById = (eventId: string) => db.get(EVENT_TABLE).find({_id: eventId}).value();
 export const getEventByType = (type: eventName, dayZero: number) => db.get(EVENT_TABLE).filter({name: type}).filter(event => event.date.from >= dayZero && event.date.from <= dayZero + OneWeek * 6).value();
