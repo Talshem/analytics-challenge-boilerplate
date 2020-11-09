@@ -185,17 +185,47 @@ export const getEventsFromDay = (dayZero: number) => db.get(EVENT_TABLE).sortBy(
 export const getWeeklySessions = (date: number) => db.get(EVENT_TABLE).filter(event => event.date.from >= date - OneWeek && event.date.from <= date).value();
 export const getDailySessions = (date: number) => db.get(EVENT_TABLE).filter(event => event.date.from >= date - OneDay && event.date.from <= date).value();
 
-export const getEventsFiltered = (type: string, browser: string, offset: number, search: string) =>
-db.get(EVENT_TABLE)
+export const getEventsFiltered = (type: string, browser: string, offset: number, search: string, sorting: '+date'|'-date') => {
+let events = db.get(EVENT_TABLE)
 // @ts-ignore
 .filter(item => item.session_id.includes(search) && item.name.includes(type) && item.browser.includes(browser))
-.sortBy('date.from')
+.sortBy('date')
 .take(offset)
 .value();
+if (sorting === '-date') events = events.reverse();
+return events
+}
 
-export const getEventByTypeTEST = (type: eventName, dayZero: number) => db.get(EVENT_TABLE).filter({name: type}).filter((event: any) => event.date >= dayZero && event.date <= dayZero + OneWeek * 6).value();
+export const getEventByTypeTEST = (type: eventName) => db.get(EVENT_TABLE).filter((event: any) => event.name === type).value();
+
 export const getWeeklySessionsTEST = (start: number, end: number) => db.get(EVENT_TABLE).filter((event: any) => event.date >= start && event.date < end).value();
+
 export const getDailySessionsTEST = (start: number, end: number) => db.get(EVENT_TABLE).filter((event: any) => event.date >= start && event.date < end).value();
+
+export const getAllEventsTEST = () => db.get(EVENT_TABLE).value();
+
+export const getAllEventsWeeklyTEST = () => {
+  let end = new Date().getTime() + OneDay;
+  end = new Date(`${new Date(end).getFullYear()}/${new Date(end).getMonth() +1}/${new Date(end).getDate()}`).getTime();
+  let start = end - OneWeek;
+
+  return db.get(EVENT_TABLE)
+  .filter((event : any) => event.date >= start && event.date < end)
+  .value()
+  
+}
+
+export const getEventsTodayTEST = () => db.get(EVENT_TABLE).filter((event: any) => 
+new Date(event.date).getFullYear() === new Date().getFullYear() &&
+new Date(event.date).getMonth() === new Date().getMonth() &&
+new Date(event.date).getDate() === new Date().getDate() 
+).value();
+
+export function resetDay(dateNow:number): number{
+  const day = new Date(dateNow).setHours(0,0,0);
+  return day;
+}
+
 
 // Search
 export const cleanSearchQuery = (query: string) => query.replace(/[^a-zA-Z0-9]/g, "");
