@@ -20,7 +20,11 @@ getWeeklySessionsTEST,
 getDailySessionsTEST,
 saveEvent,
 getWeeklySessions,
-getDailySessions
+getDailySessions,
+getAllEventsTEST,
+getAllEventsWeeklyTEST,
+getEventsTodayTEST,
+resetDay
 } from "./database";
 import { Event, weeklyRetentionObject } from "../../client/src/models/event";
 import { User } from "../../client/src/models/user";
@@ -34,6 +38,7 @@ import {
 } from "./validators";
 import { split } from "lodash";
 import { OneDay, OneHour, OneWeek } from "./timeFrames";
+import { date } from "faker";
 
 
 const router = express.Router();
@@ -85,8 +90,8 @@ const { type, offset, browser, sorting, search } = req.query
   type ? type : '',
   browser ? browser : '',
   offset ? Number(offset) : 100,
-  search ? search : '')
-  if (sorting === '-date') events = events.reverse();
+  search ? search : '',
+  sorting)
   res.json({events: events})
 });
 
@@ -117,12 +122,15 @@ router.get('/by-days/:offset', (req: Request, res: Response) => {
   const offset = req.params.offset || 0;
   let array : any = [];
   let obj : any = {};
-  // let today = Date.parse(new Date().toISOString().split('T')[0])
-  let end = new Date().getTime() - OneDay * Number(offset)
+
+  let timeNow = Date.now()
+  let end = timeNow + OneDay - OneDay*Number(offset);
+  end = new Date(`${new Date(timeNow).getFullYear()}/${new Date(timeNow).getMonth() +1}/${new Date(timeNow).getDate()}`).getTime();
   let start = end - OneWeek
+
   let events = getWeeklySessionsTEST(start, end);
   
-  for (let i=start+OneDay;i<=end; i+= OneDay){
+  for (let i=start; i<end; i+= OneDay){
     obj[`${new Date(i).toISOString().split('T')[0]}`] = 0
     }
 
@@ -169,11 +177,16 @@ router.get('/by-hours/:offset', (req: Request, res: Response) => {
   const offset = req.params.offset || 0;
   let array : any = [];
   let obj : any = {};
-  let end = new Date().getTime() - OneDay * Number(offset)
+
+  let time  = new Date().getTime() + OneDay;
+  time = new Date(`${new Date(time).getFullYear()}/${new Date(time).getMonth() +1}/${new Date(time).getDate()}`).getTime();
+
+  let end = time - OneDay * Number(offset)
   let start = end - OneDay
+
   let events = getDailySessionsTEST(start, end);
 
-  for (let i=start+OneHour;i<=end; i+= OneHour){
+  for (let i=start;i<=end; i+= OneHour){
   obj[`${new Date(i).toISOString().split('T')[0]}, ${new Date(i).getHours()}:00`] = 0
   }
 
@@ -257,18 +270,22 @@ router.get('/by-hours/:offset', (req: Request, res: Response) => {
 
 // for the test
 router.get('/retention', (req: Request, res: Response) => {
-  const { dayZero } = req.query
+  let dayZero = Number(req.query.dayZero) || Date.now() - OneWeek * 6
   let obj : any = {};
   let signUpEvents : any = [];
   
+  dayZero = resetDay(dayZero)
 
-  
-  for (let i=Number(dayZero); i < Number(dayZero) + OneWeek * 6 ; i += OneDay){
-  obj[new Date(i).toISOString().split('T')[0]] = []
+  for (let i=dayZero; i < dayZero + OneWeek * 6 ; i += OneDay){
+  obj[`${new Date(i).getFullYear()}/${new Date(i).getMonth() +1}/${new Date(i).getDate()}`] = []
   }
   
-  for (let item of getEventByTypeTEST('signup', Number(dayZero)) as any) {
-  obj[new Date(item.date).toISOString().split('T')[0]].push(item.distinct_user_id)
+
+
+  for (let item of getEventByTypeTEST('signup') as any) {
+  if(obj[`${new Date(item.date).getFullYear()}/${new Date(item.date).getMonth() +1}/${new Date(item.date).getDate()}`]){
+  obj[`${new Date(item.date).getFullYear()}/${new Date(item.date).getMonth() +1}/${new Date(item.date).getDate()}`].push(item.distinct_user_id)
+  }
   }
 
   for (const [key, value] of Object.entries(obj)) {
@@ -279,11 +296,13 @@ router.get('/retention', (req: Request, res: Response) => {
   signUpEvents.push(newObj)
   }
 
+
   let eventsData: RetentionWeek[] = []
   signUpEvents.filter((event: any) => signUpEvents.indexOf(event) % 7 === 0).map((e: any, index: number) => {
   
-  let weeklyEvents = getEventByTypeTEST('login', Number(dayZero)).filter((item : any) => item.date >= Date.parse(e.date) && item.date <= Date.parse(e.date) + OneDay*6)
-  let weeklyNewUsers = signUpEvents.filter((item : any) => Date.parse(item.date) >= Date.parse(e.date) && Date.parse(item.date) <= Date.parse(e.date) + OneDay*6)
+  let weeklyEvents = getAllEvents().filter((item : any) => item.date >= Date.parse(e.date) && item.date < Date.parse(e.date) + OneWeek && item.name !== 'signup')
+  let weeklyNewUsers = signUpEvents.filter((item : any) => Date.parse(item.date) >= Date.parse(e.date) && Date.parse(item.date) < Date.parse(e.date) + OneWeek)
+
 
   let newUsers : string[] = [];
   for (let item of weeklyNewUsers) {
@@ -317,6 +336,7 @@ router.get('/retention', (req: Request, res: Response) => {
   item.activeUsers = item.activeUsers.length
   item.newUsers = item.newUsers.length
   }
+  console.log(eventsData)
   res.send(eventsData)
   })
 
@@ -326,62 +346,135 @@ const event = getEventById(eventId)
   res.send(event)
 });
 
+// router.get('/chart/os/:time',(req: Request, res: Response) => {
+// const { time } = req.params
+// let events = getEventsFromDay(Number(time));
+// let users = getAllUsers();
+// let array: any[] = []
+
+// for ( let user of users) { 
+// let associatedEvents = events.filter((item) => item.distinct_user_id === user.id);
+// let obj: any = {}
+
+// for (let item of associatedEvents) {
+// if (obj[new Date(item.date.from).toISOString().split('T')[0]]) {
+// obj[new Date(item.date.from).toISOString().split('T')[0]][item.url.split('3000/')[1]] += 1;
+// } else {
+// obj[new Date(item.date.from).toISOString().split('T')[0]] = {
+// signup: 0,
+// login: 0,
+// home: 0,
+// admin: 0
+// }
+// obj[new Date(item.date.from).toISOString().split('T')[0]][item.url.split('3000/')[1]] = 1;
+// }
+// }
+// let datesArray: any[] = []
+// for (const [key, value] of Object.entries(obj)) {
+// datesArray.push({date: key, visits: value})
+// }
+// array.push({userId: user.id, userFullName:`${user.firstName} ${user.lastName}`, views: datesArray })
+// }
+// res.send(array)
+// })
+ 
 router.get('/chart/os/:time',(req: Request, res: Response) => {
-const { time } = req.params
-let events = getEventsFromDay(Number(time));
-let users = getAllUsers();
-let array: any[] = []
+  const { time } = req.params
+  let events: any[] = [];
+  switch(time){
+  case 'all': events = getAllEventsTEST();
+  break;
+  case 'week': events =  getAllEventsWeeklyTEST();
+  break;
+  case 'today': events = getEventsTodayTEST();
+  }
 
-for ( let user of users) { 
-let associatedEvents = events.filter((item) => item.distinct_user_id === user.id);
-let obj: any = {}
-
-for (let item of associatedEvents) {
-if (obj[new Date(item.date.from).toISOString().split('T')[0]]) {
-obj[new Date(item.date.from).toISOString().split('T')[0]][item.url.split('3000/')[1]] += 1;
-} else {
-obj[new Date(item.date.from).toISOString().split('T')[0]] = {
-signup: 0,
-login: 0,
-home: 0,
-admin: 0
-}
-obj[new Date(item.date.from).toISOString().split('T')[0]][item.url.split('3000/')[1]] = 1;
-}
-}
-let datesArray: any[] = []
-for (const [key, value] of Object.entries(obj)) {
-datesArray.push({date: key, visits: value})
-}
-array.push({userId: user.id, userFullName:`${user.firstName} ${user.lastName}`, views: datesArray })
-}
-res.send(array)
-})
+  let users = getAllUsers();
+  let array: any[] = []
   
+  // for ( let user of users) { 
+  // let associatedEvents = events.filter((item) => item.distinct_user_id === user.id);
+  // let obj: any = {}
+  
+  // for (let item of associatedEvents) {
+  // if (obj[new Date(item.date.from).toISOString().split('T')[0]]) {
+  // obj[new Date(item.date.from).toISOString().split('T')[0]][item.url.split('3000/')[1]] += 1;
+  // } else {
+  // obj[new Date(item.date.from).toISOString().split('T')[0]] = {
+  // signup: 0,
+  // login: 0,
+  // home: 0,
+  // admin: 0
+  // }
+  // obj[new Date(item.date.from).toISOString().split('T')[0]][item.url.split('3000/')[1]] = 1;
+  // }
+  // }
+  // let datesArray: any[] = []
+  // for (const [key, value] of Object.entries(obj)) {
+  // datesArray.push({date: key, visits: value})
+  // }
+  // array.push({userId: user.id, userFullName:`${user.firstName} ${user.lastName}`, views: datesArray })
+  // }
+  res.send(events)
+  })
+
+// router.get('/chart/pageview/:time',(req: Request, res: Response) => {
+// const { time } = req.params
+// let events = getEventsFromDay(Number(time));
+// let array : any = [];
+// let obj: any = {
+// home: 0,
+// login: 0,
+// admin: 0,
+// signup: 0
+// }
+// for ( let item of events) { 
+// obj[item.url.split('3000/')[1]] === 0 ?
+// obj[item.url.split('3000/')[1]] = 1 :
+// obj[item.url.split('3000/')[1]] += 1
+// }
+// for (const [key, value] of Object.entries(obj)) {
+// let newObj = {
+// page: key,
+// views: value
+// }
+// array.push(newObj)
+// }
+// res.send(array)
+// })
+
 router.get('/chart/pageview/:time',(req: Request, res: Response) => {
-const { time } = req.params
-let events = getEventsFromDay(Number(time));
-let array : any = [];
-let obj: any = {
-home: 0,
-login: 0,
-admin: 0,
-signup: 0
-}
-for ( let item of events) { 
-obj[item.url.split('3000/')[1]] === 0 ?
-obj[item.url.split('3000/')[1]] = 1 :
-obj[item.url.split('3000/')[1]] += 1
-}
-for (const [key, value] of Object.entries(obj)) {
-let newObj = {
-page: key,
-views: value
-}
-array.push(newObj)
-}
-res.send(array)
-})
+  const { time } = req.params
+  let events: any[] = [];
+  switch(time){
+  case 'all': events = getAllEventsTEST();
+  break;
+  case 'week': events =  getAllEventsWeeklyTEST();
+  break;
+  case 'today': events = getEventsTodayTEST();
+  }
+  let array : any = [];
+  let obj: any = {
+  home: 0,
+  login: 0,
+  admin: 0,
+  signup: 0
+  }
+  for ( let item of events) { 
+  obj[item.url.split('3000/')[1]] === 0 ?
+  obj[item.url.split('3000/')[1]] = 1 :
+  obj[item.url.split('3000/')[1]] += 1
+  }
+  for (const [key, value] of Object.entries(obj)) {
+  let newObj = {
+  page: key,
+  views: value
+  }
+  array.push(newObj)
+  }
+  res.send(events)
+  })
+  
 
 router.get('/chart/timeaverage/:time',(req: Request, res: Response) => {
 const { time } = req.params
@@ -435,19 +528,40 @@ array.push(obj)
 res.send(array)
 })
 
-router.get('/chart/geolocation/:time',(req: Request, res: Response) => {
-const { time } = req.params
-let array : any = [];
-let events = getEventsInDay(Number(time));
-  for (let item of events) {
-      let obj = {
-      eventId: item._id,
-      geolocation: item.geolocation,
-      }
-      array.push(obj)
-    }
-  res.send(array)
-})
+// router.get('/chart/geolocation/:time',(req: Request, res: Response) => {
+// const { time } = req.params
+// let array : any = [];
+// let events = getEventsInDay(Number(time));
+//   for (let item of events) {
+//       let obj = {
+//       eventId: item._id,
+//       geolocation: item.geolocation,
+//       }
+//       array.push(obj)
+//     }
+//   res.send(array)
+// })
 
+router.get('/chart/geolocation/:time',(req: Request, res: Response) => {
+  const { time } = req.params
+  let events: any[] = [];
+  switch(time){
+  case 'all': events = getAllEventsTEST();
+  break;
+  case 'week': events =  getAllEventsWeeklyTEST();
+  break;
+  case 'today': events = getEventsTodayTEST();
+  }
+  let array : any = [];
+    for (let item of events) {
+        let obj = {
+        eventId: item._id,
+        geolocation: item.geolocation,
+        }
+        array.push(obj)
+      }
+    res.send(events)
+  })
+  
 
 export default router;
